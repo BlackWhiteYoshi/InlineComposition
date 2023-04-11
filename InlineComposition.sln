@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32922.545
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InlineComposition", "InlineComposition\InlineComposition.csproj", "{8064FC63-5D69-4AB1-B972-BC3BCA88E725}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "InlineComposition.Tests", "InlineComposition.Tests\InlineComposition.Tests.csproj", "{6F47419D-FF03-4BF2-A493-F4BAFD02370F}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8064FC63-5D69-4AB1-B972-BC3BCA88E725}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8064FC63-5D69-4AB1-B972-BC3BCA88E725}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8064FC63-5D69-4AB1-B972-BC3BCA88E725}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8064FC63-5D69-4AB1-B972-BC3BCA88E725}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6F47419D-FF03-4BF2-A493-F4BAFD02370F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6F47419D-FF03-4BF2-A493-F4BAFD02370F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6F47419D-FF03-4BF2-A493-F4BAFD02370F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6F47419D-FF03-4BF2-A493-F4BAFD02370F}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B405E530-DAC5-4AED-871A-5F487A20AB1F}
+	EndGlobalSection
+EndGlobal
