@@ -10,7 +10,7 @@
     <Title>InlineComposition</Title>
     <Description>A source generator that merges the content of other classes into one class. A simple workaround for struct inheritance or multiple inheritance.</Description>
     <Authors>BlackWhiteYoshi</Authors>
-    <PackageTags>C#;.Net;SourceGenerator;Inheritance;Multiple;Composition;Inline</PackageTags>
+    <PackageTags>C#;.Net;Source;Generator;Inheritance;Multiple;Composition;Inline</PackageTags>
 
     <PackageReadmeFile>PACKAGE.md</PackageReadmeFile>
     <PackageProjectUrl>https://github.com/BlackWhiteYoshi/InlineComposition</PackageProjectUrl>
