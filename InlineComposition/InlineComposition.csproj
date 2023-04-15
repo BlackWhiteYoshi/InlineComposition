@@ -8,7 +8,7 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     
     <Title>InlineComposition</Title>
-    <Description>A source generator that merges the content of other classes into one class.</Description>
+    <Description>A source generator that merges the content of other classes into one class. A simple workaround for struct inheritance or multiple inheritance.</Description>
     <Authors>BlackWhiteYoshi</Authors>
     <PackageTags>C#;.Net;SourceGenerator;Inheritance;Multiple;Composition;Inline</PackageTags>
 

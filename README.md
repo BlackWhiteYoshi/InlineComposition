@@ -19,7 +19,7 @@ A simple workaround for struct inheritance or multiple inheritance.
 Inheritance gives not only all the content of a base class, you get also a type hierarchy and polymorphism.
 If you need a type hierarchy or polymorphism, you can use interfaces to get the same functionality.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 public interface IBaseA { ... }
@@ -74,7 +74,7 @@ Make sure merged members have the same signature.
 Method-bodies are merged together that every method is executed one after another.
 
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [InlineBase]
@@ -138,7 +138,7 @@ However, inserting the concrete type in place of the type parameter is done by s
 There might be situations where things get replaced/not replaced where it should/should not.
 So when inlining generic classes, better double check the result.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [InlineBase]
@@ -171,7 +171,7 @@ public partial class Derived
 Generates a class with the same name and fills it with the content of the classes/structs in the type arguments.  
 If you inline a class/struct that has no *InlineBaseAttribute*, it will be ignored.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [Inline<Example>] // "Example" must have a InlineBaseAttribute, otherwise it has no effect.
@@ -189,7 +189,7 @@ public partial class MyClass { ... }
 This class comes with up to 12 type parameters.
 If you need more, you can easily create your own suitable one.
 
-```C#
+```csharp
 namespace InlineCompositionAttributes;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
@@ -202,7 +202,7 @@ internal sealed class InlineAttribute<T1, ..., TN> : Attribute { }
 
 In order *Inline* works as expected, the classes/structs to inline must be decorated with *InlineBase*.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [InlineBase] // Itself it does nothing, but this class can now be used as type argument in InlineAttribute.
@@ -214,7 +214,7 @@ public class MyClass { ... }
 If this flag is set to true, the base classes and interfaces of the inlined class are ignored.  
 If you want inline classes that inherit from different base classes, you can use this to avoid to inherit multiple classes.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 public abstract class BaseA { ... }
@@ -246,7 +246,7 @@ Overriding a normal method and adding your own code is native not possible.
 The *InlineMethodAttribute* gives support for adding code to the inlined method.
 The content of the decorated method is added to the inlined method specified in the *MethodName* parameter and takes the same parameters.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [InlineBase]
@@ -293,7 +293,7 @@ public partial class Derived : IDisposable
 The *MethodName* is a required parameter that specify the name of the method to add content to.
 Make sure the parameters are the same to target the right (overloaded) method.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [InlineBase]
@@ -342,7 +342,7 @@ If you want different modifiers inlined than your method, you can use the *Modif
 A common scenario is that your method should not be available (private), but the inlined method should still be public.
 
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [InlineBase]
@@ -388,7 +388,7 @@ public partial class Derived : IDisposable
 
 When the added code must run before the inlined code, you can set the *First* parameter to true.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [InlineBase]
@@ -437,7 +437,7 @@ public partial class Derived : IDisposable
 The *InlineConstructorAttribute* lets you add code to the inlined constructor.
 The content of the decorated method is added to the inlined constructor.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [InlineBase]
@@ -494,7 +494,7 @@ The same functionality as *InlineMethodAttribute.First*
 The *InlineFinalizerAttribute* lets you add code to the inlined finalizer.
 The content of the decorated method is added to the inlined finalizer.
 
-```C#
+```csharp
 [InlineBase]
 public class Base
 {
@@ -544,7 +544,7 @@ The same functionality as *InlineMethodAttribute.First*
 
 Members decorated with this attribute are ignored.
 
-```C#
+```csharp
 using InlineCompositionAttributes;
 
 [InlineBase]
