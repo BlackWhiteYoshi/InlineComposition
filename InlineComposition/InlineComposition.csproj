@@ -19,7 +19,7 @@
     <RepositoryUrl>https://github.com/BlackWhiteYoshi/InlineComposition.git</RepositoryUrl>
     <PublishRepositoryUrl>true</PublishRepositoryUrl>
 
-    <PackageIconUrl>https://raw.githubusercontent.com/BlackWhiteYoshi/InlineComposition/master/ICON.png</PackageIconUrl>
+    <PackageIconUrl>https://raw.githubusercontent.com/BlackWhiteYoshi/InlineComposition/main/ICON.png</PackageIconUrl>
     <PackageIcon>ICON.png</PackageIcon>
 
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
