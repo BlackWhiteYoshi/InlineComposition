@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
+using System.Runtime.CompilerServices;
 
 namespace InlineComposition;
 
@@ -12,8 +13,8 @@ public struct AttributeCollection : IEquatable<AttributeCollection> {
     public AttributeCollection(AttributeSyntax inlineAttribute, AttributeSyntax?[] baseAttributes, TypeDeclarationSyntax?[] baseClasses) {
         this.inlineAttribute = inlineAttribute;
         inlineClass = (TypeDeclarationSyntax)inlineAttribute.Parent!.Parent!;
-        this.baseAttributes = ImmutableArray.Create(baseAttributes);
-        this.baseClasses = ImmutableArray.Create(baseClasses);
+        this.baseAttributes = Unsafe.As<AttributeSyntax?[], ImmutableArray<AttributeSyntax?>>(ref baseAttributes);
+        this.baseClasses = Unsafe.As<TypeDeclarationSyntax?[], ImmutableArray<TypeDeclarationSyntax?>>(ref baseClasses);
     }
 
     public override bool Equals(object? obj) {
