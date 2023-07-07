@@ -9,7 +9,7 @@ namespace InlineComposition;
 public sealed class InlineCompositionGenerator : IIncrementalGenerator {
     public void Initialize(IncrementalGeneratorInitializationContext context) {
         // register attribute marker
-        context.RegisterPostInitializationOutput((IncrementalGeneratorPostInitializationContext context) => {
+        context.RegisterPostInitializationOutput(static (IncrementalGeneratorPostInitializationContext context) => {
             context.AddSource("InlineBaseAttribute.g.cs", Attributes.InlineBaseAttribute);
             context.AddSource("NoInlineAttribute.g.cs", Attributes.NoInlineAttribute);
             context.AddSource("InlineAttribute.g.cs", Attributes.InlineAttribute);
@@ -60,9 +60,9 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
     #region Predicate
 
-    private bool PredicateInlineBase(SyntaxNode syntaxNode, CancellationToken _) => PredicateInlineCore(syntaxNode, "InlineBase", "InlineBaseAttribute");
-    private bool PredicateInline(SyntaxNode syntaxNode, CancellationToken _) => PredicateInlineCore(syntaxNode, "Inline", "InlineAttribute");
-    private bool PredicateInlineCore(SyntaxNode syntaxNode, string name, string nameAttribute) {
+    private static bool PredicateInlineBase(SyntaxNode syntaxNode, CancellationToken _) => PredicateInlineCore(syntaxNode, "InlineBase", "InlineBaseAttribute");
+    private static bool PredicateInline(SyntaxNode syntaxNode, CancellationToken _) => PredicateInlineCore(syntaxNode, "Inline", "InlineAttribute");
+    private static bool PredicateInlineCore(SyntaxNode syntaxNode, string name, string nameAttribute) {
         if (syntaxNode is not AttributeSyntax attributeSyntax)
             return false;
 
@@ -88,14 +88,12 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
     #region Transform
 
-    private T Identity<T>(GeneratorSyntaxContext syntaxContext, CancellationToken _) where T : SyntaxNode => (T)syntaxContext.Node;
-    
-    //private TypeDeclarationSyntax AttributeToClass(GeneratorSyntaxContext syntaxContext, CancellationToken _) => (TypeDeclarationSyntax)syntaxContext.Node.Parent!.Parent!;
+    private static T Identity<T>(GeneratorSyntaxContext syntaxContext, CancellationToken _) where T : SyntaxNode => (T)syntaxContext.Node;
 
     #endregion
 
 
-    private void Execute(SourceProductionContext context, AttributeCollection attributeProvider) {
+    private static void Execute(SourceProductionContext context, AttributeCollection attributeProvider) {
         AttributeSyntax inlineAttribute = attributeProvider.inlineAttribute;
         TypeDeclarationSyntax derivedClass = attributeProvider.inlineClass;
         ImmutableArray<AttributeSyntax?> baseAttributes = attributeProvider.baseAttributes;
