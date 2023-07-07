@@ -1,5 +1,4 @@
 ﻿using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CSharp;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 using System.Text;
@@ -118,7 +117,8 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             CompilationUnitSyntax? compilationUnit = inlineClass.GetParent<CompilationUnitSyntax>();
             if (compilationUnit != null)
                 foreach (UsingDirectiveSyntax usingSyntax in compilationUnit.Usings)
-                    usingStatementList.Add(usingSyntax.Name.ToFullString());
+                    if (usingSyntax.Name != null)
+                        usingStatementList.Add(usingSyntax.Name.ToFullString());
         }
 
         if (context.CancellationToken.IsCancellationRequested)
@@ -238,7 +238,8 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             CompilationUnitSyntax? compilationUnit = classType.GetParent<CompilationUnitSyntax>();
             if (compilationUnit != null)
                 foreach (UsingDirectiveSyntax usingSyntax in compilationUnit.Usings)
-                    usingStatementList.Add(usingSyntax.Name.ToFullString());
+                    if (usingSyntax.Name != null)
+                        usingStatementList.Add(usingSyntax.Name.ToFullString());
 
             // baseclasses and interfaces
             if (!baseClassNode.ignoreInheritenceAndImplements && classType.BaseList != null)
