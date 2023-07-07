@@ -44,4 +44,17 @@ internal static class NodeExtensions {
 
         return null;
     }
+
+    /// <summary>
+    /// If QualifiedNameSyntax, only right part is taken<br/>
+    /// if it is not a GenericNameSyntax, cast-exception is thrown
+    /// </summary>
+    /// <param name="nameSyntax"></param>
+    /// <returns></returns>
+    internal static GenericNameSyntax GetGenericNameSyntax(this NameSyntax nameSyntax) {
+        if (nameSyntax is QualifiedNameSyntax qualifiedName)
+            nameSyntax = qualifiedName.Right;
+
+        return (GenericNameSyntax)nameSyntax;
+    }
 }

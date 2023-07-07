@@ -28,7 +28,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         // Inline attributes with baseClasses
         IncrementalValuesProvider<AttributeCollection> inlineAndInlineBaseListProvider = inlineProvider.Combine(inlineBaseListProvider)
             .Select(static ((AttributeSyntax inlineAttribute, ImmutableArray<AttributeSyntax> baseAttributes) tuple, CancellationToken _) => {
-                SeparatedSyntaxList<TypeSyntax> arguments = ((GenericNameSyntax)tuple.inlineAttribute.Name).TypeArgumentList.Arguments;
+                SeparatedSyntaxList<TypeSyntax> arguments = tuple.inlineAttribute.Name.GetGenericNameSyntax().TypeArgumentList.Arguments;
                 AttributeSyntax?[] resultAttribute = new AttributeSyntax[arguments.Count];
                 TypeDeclarationSyntax?[] resultClass = new TypeDeclarationSyntax[arguments.Count];
 
@@ -186,7 +186,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
         BaseClassNode[] baseClassNodes;
         {
-            SeparatedSyntaxList<TypeSyntax> arguments = ((GenericNameSyntax)inlineAttribute.Name).TypeArgumentList.Arguments;
+            SeparatedSyntaxList<TypeSyntax> arguments = inlineAttribute.Name.GetGenericNameSyntax().TypeArgumentList.Arguments;
             baseClassNodes = new BaseClassNode[arguments.Count];
             for (int i = 0; i < arguments.Count; i++) {
                 baseClassNodes[i] = new();
