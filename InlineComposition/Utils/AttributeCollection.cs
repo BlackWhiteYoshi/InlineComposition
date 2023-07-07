@@ -28,9 +28,8 @@ public struct AttributeCollection : IEquatable<AttributeCollection> {
         if (inlineClass != other.inlineClass)
             return false;
 
-        for (int i = 0; i < baseClasses.Length; i++)
-            if (baseClasses[i] != other.baseClasses[i])
-                return false;
+        if (!baseClasses.SequenceEqual(other.baseClasses))
+            return false;
 
         return true;
     }
