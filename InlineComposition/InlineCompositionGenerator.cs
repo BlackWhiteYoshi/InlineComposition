@@ -19,40 +19,13 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         });
 
         // all classes/structs with InlineBase attribute
-        IncrementalValueProvider<ImmutableArray<AttributeSyntax>> inlineBaseListProvider = context.SyntaxProvider.CreateSyntaxProvider(PredicateInlineBase, Identity<AttributeSyntax>)
-            .Collect();
+        IncrementalValueProvider<ImmutableArray<AttributeSyntax>> inlineBaseListProvider = context.SyntaxProvider.CreateSyntaxProvider(PredicateInlineBase, Identity<AttributeSyntax>).Collect();
 
         // Inline attributes
         IncrementalValuesProvider<AttributeSyntax> inlineProvider = context.SyntaxProvider.CreateSyntaxProvider(PredicateInline, Identity<AttributeSyntax>);
 
         // Inline attributes with baseClasses
-        IncrementalValuesProvider<AttributeCollection> inlineAndInlineBaseListProvider = inlineProvider.Combine(inlineBaseListProvider)
-            .Select(static ((AttributeSyntax inlineAttribute, ImmutableArray<AttributeSyntax> baseAttributes) tuple, CancellationToken _) => {
-                SeparatedSyntaxList<TypeSyntax> arguments = tuple.inlineAttribute.Name.GetGenericNameSyntax().TypeArgumentList.Arguments;
-                AttributeSyntax?[] resultAttribute = new AttributeSyntax[arguments.Count];
-                TypeDeclarationSyntax?[] resultClass = new TypeDeclarationSyntax[arguments.Count];
-
-                for (int i = 0; i < arguments.Count; i++) {
-                    string name = arguments[i] switch {
-                        PredefinedTypeSyntax predefinedType => predefinedType.Keyword.ValueText,
-                        SimpleNameSyntax simpleNameSyntax => simpleNameSyntax.Identifier.ValueText,
-                        QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
-                        _ => throw new Exception("No matching SyntaxType for generic argument: cannot identify value of generic argument")
-                    };
-
-                    // linear search for listed class/struct
-                    foreach (AttributeSyntax baseAttribute in tuple.baseAttributes) {
-                        TypeDeclarationSyntax baseClass = (TypeDeclarationSyntax)baseAttribute.Parent!.Parent!;
-                        if (name == baseClass.Identifier.ValueText) {
-                            resultAttribute[i] = baseAttribute;
-                            resultClass[i] = baseClass;
-                            break;
-                        }
-                    }
-                }
-
-                return new AttributeCollection(tuple.inlineAttribute, resultAttribute, resultClass);
-            });
+        IncrementalValuesProvider<AttributeCollection> inlineAndInlineBaseListProvider = inlineProvider.Combine(inlineBaseListProvider).Select(CreateAttributeCollection);
 
         context.RegisterSourceOutput(inlineAndInlineBaseListProvider, Execute);
     }
@@ -89,6 +62,38 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
     #region Transform
 
     private static T Identity<T>(GeneratorSyntaxContext syntaxContext, CancellationToken _) where T : SyntaxNode => (T)syntaxContext.Node;
+
+    #endregion
+
+
+    #region Combine
+
+    private static AttributeCollection CreateAttributeCollection((AttributeSyntax inlineAttribute, ImmutableArray<AttributeSyntax> baseAttributes) tuple, CancellationToken _) {
+        SeparatedSyntaxList<TypeSyntax> arguments = tuple.inlineAttribute.Name.GetGenericNameSyntax().TypeArgumentList.Arguments;
+        AttributeSyntax?[] resultAttribute = new AttributeSyntax[arguments.Count];
+        TypeDeclarationSyntax?[] resultClass = new TypeDeclarationSyntax[arguments.Count];
+
+        for (int i = 0; i < arguments.Count; i++) {
+            string name = arguments[i] switch {
+                PredefinedTypeSyntax predefinedType => predefinedType.Keyword.ValueText,
+                SimpleNameSyntax simpleNameSyntax => simpleNameSyntax.Identifier.ValueText,
+                QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
+                _ => throw new Exception("No matching SyntaxType for generic argument: cannot identify value of generic argument")
+            };
+
+            // linear search for listed class/struct
+            foreach (AttributeSyntax baseAttribute in tuple.baseAttributes) {
+                TypeDeclarationSyntax baseClass = (TypeDeclarationSyntax)baseAttribute.Parent!.Parent!;
+                if (name == baseClass.Identifier.ValueText) {
+                    resultAttribute[i] = baseAttribute;
+                    resultClass[i] = baseClass;
+                    break;
+                }
+            }
+        }
+
+        return new AttributeCollection(tuple.inlineAttribute, resultAttribute, resultClass);
+    }
 
     #endregion
 
@@ -436,7 +441,11 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         builder.Append('\n');
 
 
-        context.AddSource($"{inlineClassName}.g.cs", builder.ToString());
+        string hintName = namespaceSyntax switch {
+            BaseNamespaceDeclarationSyntax => $"{namespaceSyntax.Name}.{inlineClassName}.g.cs",
+            _ => $"{inlineClassName}.g.cs"
+        };
+        context.AddSource(hintName, builder.ToString());
 
         #endregion
     }
