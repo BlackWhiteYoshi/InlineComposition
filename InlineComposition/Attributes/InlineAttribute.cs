@@ -7,6 +7,8 @@ public static partial class Attributes {
     #nullable enable annotations
 
 
+    using System;
+    
     namespace InlineCompositionAttributes;
 
     /// <summary>
@@ -14,6 +16,7 @@ public static partial class Attributes {
     /// </summary>
     /// <typeparam name="T1">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1> : Attribute { }
 
     /// <summary>
@@ -22,6 +25,7 @@ public static partial class Attributes {
     /// <typeparam name="T1">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T2">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2> : Attribute { }
 
     /// <summary>
@@ -31,6 +35,7 @@ public static partial class Attributes {
     /// <typeparam name="T2">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T3">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3> : Attribute { }
 
     /// <summary>
@@ -41,6 +46,7 @@ public static partial class Attributes {
     /// <typeparam name="T3">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T4">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3, T4> : Attribute { }
 
     /// <summary>
@@ -52,6 +58,7 @@ public static partial class Attributes {
     /// <typeparam name="T4">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T5">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3, T4, T5> : Attribute { }
 
     /// <summary>
@@ -64,6 +71,7 @@ public static partial class Attributes {
     /// <typeparam name="T5">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T6">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3, T4, T5, T6> : Attribute { }
 
     /// <summary>
@@ -77,6 +85,7 @@ public static partial class Attributes {
     /// <typeparam name="T6">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T7">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3, T4, T5, T6, T7> : Attribute { }
 
     /// <summary>
@@ -91,6 +100,7 @@ public static partial class Attributes {
     /// <typeparam name="T7">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T8">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3, T4, T5, T6, T7, T8> : Attribute { }
 
     /// <summary>
@@ -106,6 +116,7 @@ public static partial class Attributes {
     /// <typeparam name="T8">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T9">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9> : Attribute { }
 
     /// <summary>
@@ -122,6 +133,7 @@ public static partial class Attributes {
     /// <typeparam name="T9">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T10">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10> : Attribute { }
 
     /// <summary>
@@ -139,6 +151,7 @@ public static partial class Attributes {
     /// <typeparam name="T10">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T11">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11> : Attribute { }
 
     /// <summary>
@@ -157,6 +170,7 @@ public static partial class Attributes {
     /// <typeparam name="T11">class/struct which members gets inlined.</typeparam>
     /// <typeparam name="T12">class/struct which members gets inlined.</typeparam>
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineAttribute<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12> : Attribute { }
 
     """;

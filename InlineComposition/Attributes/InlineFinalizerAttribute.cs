@@ -7,12 +7,15 @@ public static partial class Attributes {
     #nullable enable annotations
     
     
+    using System;
+    
     namespace InlineCompositionAttributes;
 
     /// <summary>
     /// The Method under this attribute will be inlined in the finalizer.
     /// </summary>
     [AttributeUsage(AttributeTargets.Method)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class InlineFinalizerAttribute : Attribute {
         /// <summary>
         /// Indicates whether this method gets inlined before the other finalizers or after.

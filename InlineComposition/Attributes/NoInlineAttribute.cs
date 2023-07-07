@@ -7,6 +7,8 @@ public static partial class Attributes {
     #nullable enable annotations
     
     
+    using System;
+    
     namespace InlineCompositionAttributes;
 
     /// <summary>
@@ -14,6 +16,7 @@ public static partial class Attributes {
     /// <para>Skips/Ignores this member.</para>
     /// </summary>
     [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
+    [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
     internal sealed class NoInlineAttribute : Attribute { }
     
     """;
