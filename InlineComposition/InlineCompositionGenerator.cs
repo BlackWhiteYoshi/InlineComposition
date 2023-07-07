@@ -6,7 +6,7 @@ using System.Text;
 
 namespace InlineComposition;
 
-[Generator]
+[Generator(LanguageNames.CSharp)]
 public sealed class InlineCompositionGenerator : IIncrementalGenerator {
     public void Initialize(IncrementalGeneratorInitializationContext context) {
         // register attribute marker
