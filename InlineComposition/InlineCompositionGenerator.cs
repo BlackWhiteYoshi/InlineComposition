@@ -117,6 +117,15 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
         // usings of inlineClass
         {
+            BaseNamespaceDeclarationSyntax? namspace = inlineClass.GetParent<BaseNamespaceDeclarationSyntax>();
+            while (namspace != null) {
+                foreach (UsingDirectiveSyntax usingSyntax in namspace.Usings)
+                    if (usingSyntax.Name != null)
+                        usingStatementList.Add(usingSyntax.Name.ToFullString());
+
+                namspace = namspace.GetParent<BaseNamespaceDeclarationSyntax>();
+            }
+
             CompilationUnitSyntax? compilationUnit = inlineClass.GetParent<CompilationUnitSyntax>();
             if (compilationUnit != null)
                 foreach (UsingDirectiveSyntax usingSyntax in compilationUnit.Usings)
@@ -238,11 +247,22 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 continue;
 
             // usings
-            CompilationUnitSyntax? compilationUnit = classType.GetParent<CompilationUnitSyntax>();
-            if (compilationUnit != null)
-                foreach (UsingDirectiveSyntax usingSyntax in compilationUnit.Usings)
-                    if (usingSyntax.Name != null)
-                        usingStatementList.Add(usingSyntax.Name.ToFullString());
+            {
+                BaseNamespaceDeclarationSyntax? namspace = classType.GetParent<BaseNamespaceDeclarationSyntax>();
+                while (namspace != null) {
+                    foreach (UsingDirectiveSyntax usingSyntax in namspace.Usings)
+                        if (usingSyntax.Name != null)
+                            usingStatementList.Add(usingSyntax.Name.ToFullString());
+
+                    namspace = namspace.GetParent<BaseNamespaceDeclarationSyntax>();
+                }
+
+                CompilationUnitSyntax? compilationUnit = classType.GetParent<CompilationUnitSyntax>();
+                if (compilationUnit != null)
+                    foreach (UsingDirectiveSyntax usingSyntax in compilationUnit.Usings)
+                        if (usingSyntax.Name != null)
+                            usingStatementList.Add(usingSyntax.Name.ToFullString());
+            }
 
             // baseclasses and interfaces
             if (!baseClassNode.ignoreInheritenceAndImplements && classType.BaseList != null)
@@ -370,13 +390,33 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         }
 
         // namespace
-        BaseNamespaceDeclarationSyntax? namespaceSyntax = inlineClass.GetParent<BaseNamespaceDeclarationSyntax>();
-        if (namespaceSyntax != null) {
-            builder.Append("namespace ");
-            builder.Append(namespaceSyntax.Name.ToString());
-            builder.Append(';');
-            builder.Append('\n');
-            builder.Append('\n');
+        string classNamespace;
+        {
+            BaseNamespaceDeclarationSyntax? namespaceSyntax = inlineClass.GetParent<BaseNamespaceDeclarationSyntax>();
+            if (namespaceSyntax != null) {
+                builder.Append("namespace ");
+
+                int startIndex = builder.Length;
+                AppendNamespace(namespaceSyntax, builder);
+                classNamespace = builder.ToString(startIndex, builder.Length - startIndex);
+
+                builder.Append(';');
+                builder.Append('\n');
+                builder.Append('\n');
+
+
+                static void AppendNamespace(BaseNamespaceDeclarationSyntax namespaceSyntax, StringBuilder builder) {
+                    BaseNamespaceDeclarationSyntax? parentNamespace = namespaceSyntax.GetParent<BaseNamespaceDeclarationSyntax>();
+                    if (parentNamespace != null) {
+                        AppendNamespace(parentNamespace, builder);
+                        builder.Append('.');
+                    }
+
+                    builder.Append(namespaceSyntax.Name.ToString());
+                }
+            }
+            else
+                classNamespace = string.Empty;
         }
 
         // class/struct declaration
@@ -441,8 +481,8 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         builder.Append('\n');
 
 
-        string hintName = namespaceSyntax switch {
-            BaseNamespaceDeclarationSyntax => $"{namespaceSyntax.Name}.{inlineClassName}.g.cs",
+        string hintName = classNamespace switch {
+            string { Length: > 0 } => $"{classNamespace}.{inlineClassName}.g.cs",
             _ => $"{inlineClassName}.g.cs"
         };
         context.AddSource(hintName, builder.ToString());
