@@ -107,12 +107,12 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         TypeDeclarationSyntax inlineClass = (TypeDeclarationSyntax)inlineAttribute.Parent!.Parent!;
         string inlineClassName = inlineClass.Identifier.ValueText;
 
-        HashSet<string> usingStatementList = new();
-        HashSet<string> baseList = new();
-        Dictionary<string, string> fieldList = new();
-        Dictionary<string, string> propertyList = new();
-        Dictionary<string, string> eventList = new();
-        Dictionary<string, MethodEntry> methodList = new();
+        HashSet<string> usingStatementList = [];
+        HashSet<string> baseList = [];
+        Dictionary<string, string> fieldList = [];
+        Dictionary<string, string> propertyList = [];
+        Dictionary<string, string> eventList = [];
+        Dictionary<string, MethodEntry> methodList = [];
 
 
         // usings of inlineClass
@@ -186,8 +186,11 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
                 AddHeadMethod(method, entry.headList, name, modifiers);
 
-                if (first)
-                    entry.blockList.Add(GetMethodBody(method));
+                if (first) {
+                    string? bodySource = GetMethodBody(method);
+                    if (bodySource != null)
+                        entry.blockList.Add(bodySource);
+                }
                 else
                     entry.lastBlock = GetMethodBody(method);
 
@@ -272,7 +275,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             // generic parameters
             string[] genericParameters;
             if (classType.TypeParameterList == null)
-                genericParameters = Array.Empty<string>();
+                genericParameters = [];
             else {
                 SeparatedSyntaxList<TypeParameterSyntax> genericParameterList = classType.TypeParameterList.Parameters;
                 genericParameters = new string[genericParameterList.Count];
@@ -352,9 +355,11 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                             methodList.Add(methodName, entry);
                         }
 
-                        string rawSource = GetMethodBody(method);
-                        string source = ReplaceGeneric(rawSource, genericParameters, genericArguments);
-                        entry.blockList.Add(source);
+                        string? rawSource = GetMethodBody(method);
+                        if (rawSource != null) {
+                            string source = ReplaceGeneric(rawSource, genericParameters, genericArguments);
+                            entry.blockList.Add(source);
+                        }
                     }
                 }
             }
@@ -456,22 +461,29 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         foreach (KeyValuePair<string, MethodEntry> pair in methodList) {
             foreach (string chunk in pair.Value.headList)
                 builder.Append(chunk);
-            foreach (string block in pair.Value.blockList) {
-                builder.Append("        {");
-                builder.Append('\n');
-                builder.Append(block);
-                builder.Append("        }");
-                builder.Append('\n');
+            if (pair.Value.blockList.Count > 0 || pair.Value.lastBlock != null) {
+                // open method
+                builder.Append("{\n");
+                foreach (string block in pair.Value.blockList) {
+                    builder.Append("        {");
+                    builder.Append('\n');
+                    builder.Append(block);
+                    builder.Append("        }");
+                    builder.Append('\n');
+                }
+                if (pair.Value.lastBlock != null) {
+                    builder.Append("        {");
+                    builder.Append('\n');
+                    builder.Append(pair.Value.lastBlock);
+                    builder.Append("        }");
+                    builder.Append('\n');
+                }
+                // close method
+                builder.Append("    }");
             }
-            if (pair.Value.lastBlock != string.Empty) {
-                builder.Append("        {");
-                builder.Append('\n');
-                builder.Append(pair.Value.lastBlock);
-                builder.Append("        }");
-                builder.Append('\n');
-            }
-            // close method
-            builder.Append("    }");
+            else
+                builder.Append(';');
+
             builder.Append('\n');
             builder.Append('\n');
         }
@@ -578,11 +590,25 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 list.Add(" ");
             }
 
-        list.Add(method.ReturnType switch {
-            PredefinedTypeSyntax predefinedType => predefinedType.Keyword.ValueText,
-            SimpleNameSyntax simpleNameSyntax => simpleNameSyntax.Identifier.ValueText,
-            _ => throw new Exception("No matching SyntaxType for returnType: cannot identify value of returnType")
-        });
+        switch (method.ReturnType) {
+            case PredefinedTypeSyntax predefinedType:
+                list.Add(predefinedType.Keyword.ValueText);
+                break;
+            case SimpleNameSyntax simpleNameSyntax:
+                list.Add(simpleNameSyntax.Identifier.ValueText);
+                break;
+            case RefTypeSyntax refTypeSyntax:
+                if (refTypeSyntax.ReadOnlyKeyword.ValueText != string.Empty) {
+                    list.Add(refTypeSyntax.ReadOnlyKeyword.ValueText);
+                    list.Add(" ");
+                }
+                list.Add(refTypeSyntax.RefKeyword.ValueText);
+                list.Add(" ");
+                list.Add(((PredefinedTypeSyntax)refTypeSyntax.Type).Keyword.ValueText);
+                break;
+            default:
+                throw new Exception("No matching SyntaxType for returnType: cannot identify value of returnType");
+        }
         
         list.Add(" ");
         if (method.ExplicitInterfaceSpecifier != null) {
@@ -594,7 +620,6 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         if (method.TypeParameterList != null)
             list.Add(method.TypeParameterList.ToFullString());
         list.Add(method.ParameterList.ToFullString());
-        list.Add("{\n");
     }
 
     private static void AddConDestructorHead(BaseMethodDeclarationSyntax method, List<string> list, string name, string? modifiers = null) {
@@ -613,10 +638,9 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             }
         list.Add(name);
         list.Add(method.ParameterList.ToFullString());
-        list.Add("{\n");
     }
 
-    private static string GetMethodBody(BaseMethodDeclarationSyntax method) {
+    private static string? GetMethodBody(BaseMethodDeclarationSyntax method) {
         if (method.Body != null)
             return method.Body.Statements.ToFullString();
         
@@ -633,14 +657,14 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                         """;
         }
         
-        return string.Empty;
+        return null;
     }
 
     private static unsafe string ReplaceGeneric(string source, string[] parameters, string[] arguments) {
         if (parameters.Length == 0)
             return source;
 
-        List<(int index, int paraIndex)> replaceIndexList = new();
+        List<(int index, int paraIndex)> replaceIndexList = [];
 
         for (int i = 0; i < parameters.Length; i++) {
             int state = 1;

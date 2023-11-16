@@ -4,19 +4,11 @@ using System.Runtime.CompilerServices;
 
 namespace InlineComposition;
 
-public readonly struct AttributeCollection : IEquatable<AttributeCollection> {
-    public readonly AttributeSyntax inlineAttribute;
-    public readonly TypeDeclarationSyntax inlineClass;
-    public readonly ImmutableArray<AttributeSyntax?> baseAttributes;
-    public readonly ImmutableArray<TypeDeclarationSyntax?> baseClasses;
-
-    public AttributeCollection(AttributeSyntax inlineAttribute, AttributeSyntax?[] baseAttributes, TypeDeclarationSyntax?[] baseClasses) {
-        this.inlineAttribute = inlineAttribute;
-        inlineClass = (TypeDeclarationSyntax)inlineAttribute.Parent!.Parent!;
-        this.baseAttributes = Unsafe.As<AttributeSyntax?[], ImmutableArray<AttributeSyntax?>>(ref baseAttributes);
-        this.baseClasses = Unsafe.As<TypeDeclarationSyntax?[], ImmutableArray<TypeDeclarationSyntax?>>(ref baseClasses);
-    }
-
+public readonly struct AttributeCollection(AttributeSyntax inlineAttribute, AttributeSyntax?[] baseAttributes, TypeDeclarationSyntax?[] baseClasses) : IEquatable<AttributeCollection> {
+    public readonly AttributeSyntax inlineAttribute = inlineAttribute;
+    public readonly TypeDeclarationSyntax inlineClass = (TypeDeclarationSyntax)inlineAttribute.Parent!.Parent!;
+    public readonly ImmutableArray<AttributeSyntax?> baseAttributes = Unsafe.As<AttributeSyntax?[], ImmutableArray<AttributeSyntax?>>(ref baseAttributes);
+    public readonly ImmutableArray<TypeDeclarationSyntax?> baseClasses = Unsafe.As<TypeDeclarationSyntax?[], ImmutableArray<TypeDeclarationSyntax?>>(ref baseClasses);
 
     public readonly override bool Equals(object? obj) {
         if (obj is not AttributeCollection collection)

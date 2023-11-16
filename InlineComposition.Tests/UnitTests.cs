@@ -254,6 +254,38 @@ public sealed class UnitTests {
     }
 
     [Fact]
+    public void Inline_Extern_Method_Works() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test {
+                [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_internString")]
+                private extern static ref string GetString(Test @this);
+            }
+            
+            [Inline<Test>]
+            public sealed partial class Derived { }
+
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_internString")]
+                private extern static ref string GetString(Test @this);
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
     public void Inline_MethodMerge_Works() {
         const string input = """
             using InlineCompositionAttributes;
@@ -1062,6 +1094,44 @@ public sealed class UnitTests {
                     int cd = 283;
                     }
                 }
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void MultipleBases_ConflictsExternMethods_GetMerged() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test {
+                [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_internString")]
+                private extern static ref string GetString(Test @this);
+            }
+
+            [InlineBase]
+            public sealed class Test2 {
+                [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_internString")]
+                private extern static ref string GetString(Test @this);
+            }
+
+            [Inline<Test, Test2>]
+            public sealed partial class Derived { }
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_internString")]
+                private extern static ref string GetString(Test @this);
 
             }
             
