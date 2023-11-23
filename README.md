@@ -569,10 +569,3 @@ public partial class Derived
     public int MyProperty { get; set; }
 }
 ```
-
-
-
-<br></br>
-## Primary Constructors
-
-Primary constructors are not supported yet.

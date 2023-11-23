@@ -150,6 +150,11 @@ public sealed class UnitTests {
         Assert.Equal(expected, sourceText);
     }
 
+    #endregion
+
+
+    #region head - Comments and BaseClasses
+
     [Fact]
     public void Inline_AttributeAndComment_Works() {
         const string input = """
@@ -182,6 +187,58 @@ public sealed class UnitTests {
                 [Something]
                 public bool A { get; private set; }
 
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void Inline_BaseClassAndInterfaces_Works() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test : MyBase, IA, IB;
+            
+            [Inline<Test>]
+            public sealed partial class Derived;
+
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived : MyBase, IA, IB {
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void Inline_BaseClassWithPrimaryConstructor_Works() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test : MyBase(5);
+            
+            [Inline<Test>]
+            public sealed partial class Derived;
+
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived : MyBase(5) {
             }
             
             """;
@@ -900,6 +957,32 @@ public sealed class UnitTests {
         Assert.Equal(expected, sourceText);
     }
 
+    [Fact]
+    public void Inline_PrimaryConstructor_Works() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test(int prime);
+
+            [Inline<Test>]
+            public sealed partial class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived(int prime) {
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
 
     [Fact]
     public void Inline_Finalizer_Works() {
@@ -1063,6 +1146,64 @@ public sealed class UnitTests {
 
                 public int myField2 = 25;
 
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void MultipleBases_PrimaryConstructor_GetMerged() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test(int prime);
+
+            [InlineBase]
+            public sealed class Test2(int prime, string a);
+
+            [Inline<Test, Test2>]
+            public sealed partial class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived(int prime, string a) {
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void MultipleBases_PrimaryConstructor_DifferentNamesGetNotMerged() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test(int prime);
+
+            [InlineBase]
+            public sealed class Test2(int prime2, string a);
+
+            [Inline<Test, Test2>]
+            public sealed partial class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived(int prime, int prime2, string a) {
             }
             
             """;

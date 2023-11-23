@@ -108,6 +108,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         string inlineClassName = inlineClass.Identifier.ValueText;
 
         HashSet<string> usingStatementList = [];
+        HashSet<string> primaryArgumentsList = [];
         HashSet<string> baseList = [];
         Dictionary<string, string> fieldList = [];
         Dictionary<string, string> propertyList = [];
@@ -267,10 +268,15 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                             usingStatementList.Add(usingSyntax.Name.ToFullString());
             }
 
+            // primary constructor parameters
+            if (classType.ParameterList != null)
+                foreach (ParameterSyntax parameter in classType.ParameterList.Parameters)
+                    primaryArgumentsList.Add(parameter.ToString());
+
             // baseclasses and interfaces
             if (!baseClassNode.ignoreInheritenceAndImplements && classType.BaseList != null)
-                foreach (BaseTypeSyntax typeSyntax in classType.BaseList.Types)
-                    baseList.Add(((IdentifierNameSyntax)typeSyntax.Type).Identifier.ValueText);
+                foreach (BaseTypeSyntax baseTypeSyntax in classType.BaseList.Types)
+                    baseList.Add(baseTypeSyntax.ToString());
 
             // generic parameters
             string[] genericParameters;
@@ -433,6 +439,16 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         builder.Append(' ');
         builder.Append(inlineClassName);
         builder.Append(inlineClass.TypeParameterList?.ToString());
+        if (primaryArgumentsList.Count > 0) {
+            builder.Append('(');
+            foreach (string argument in primaryArgumentsList) {
+                builder.Append(argument);
+                builder.Append(',');
+                builder.Append(' ');
+            }
+            builder.Length -= 2;
+            builder.Append(')');
+        }
         if (baseList.Count > 0) {
             builder.Append(" :");
             foreach (string baseIdentifier in baseList) {
