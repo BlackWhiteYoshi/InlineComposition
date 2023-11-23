@@ -432,7 +432,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         builder.Append(inlineClass.Keyword.ValueText);
         builder.Append(' ');
         builder.Append(inlineClassName);
-        builder.Append(inlineClass.TypeParameterList?.ToFullString());
+        builder.Append(inlineClass.TypeParameterList?.ToString());
         if (baseList.Count > 0) {
             builder.Append(" :");
             foreach (string baseIdentifier in baseList) {
@@ -481,8 +481,10 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 // close method
                 builder.Append("    }");
             }
-            else
+            else {
+                builder.Length--; // remove a space
                 builder.Append(';');
+            }
 
             builder.Append('\n');
             builder.Append('\n');
@@ -618,8 +620,9 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         list.Add(name);
         
         if (method.TypeParameterList != null)
-            list.Add(method.TypeParameterList.ToFullString());
-        list.Add(method.ParameterList.ToFullString());
+            list.Add(method.TypeParameterList.ToString());
+        list.Add(method.ParameterList.ToString());
+        list.Add(" ");
     }
 
     private static void AddConDestructorHead(BaseMethodDeclarationSyntax method, List<string> list, string name, string? modifiers = null) {
@@ -637,7 +640,15 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 list.Add(" ");
             }
         list.Add(name);
-        list.Add(method.ParameterList.ToFullString());
+        list.Add(method.ParameterList.ToString());
+
+        if (method is ConstructorDeclarationSyntax { Initializer: not null } constructor) {
+            list.Add(" : ");
+            list.Add(constructor.Initializer.ThisOrBaseKeyword.ValueText);
+            list.Add(constructor.Initializer.ArgumentList.ToString());
+        }
+
+        list.Add(" ");
     }
 
     private static string? GetMethodBody(BaseMethodDeclarationSyntax method) {

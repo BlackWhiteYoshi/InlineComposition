@@ -28,7 +28,7 @@ public sealed class UnitTests {
         return generatorResult.GeneratedSources.Select((GeneratedSourceResult generatedSource) => generatedSource.SourceText.ToString()).ToArray();
 
 
-        static Compilation CreateCompilation(string source) {
+        static CSharpCompilation CreateCompilation(string source) {
             SyntaxTree syntaxTree = CSharpSyntaxTree.ParseText(source);
             PortableExecutableReference metadataReference = MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location);
             CSharpCompilationOptions compilationOptions = new(OutputKind.ConsoleApplication);
@@ -613,6 +613,98 @@ public sealed class UnitTests {
                 public Derived() {
                     {
                     int ab = 17;
+                    }
+                }
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void Inline_ConstructorWithThisCall_Works() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test {
+                public Test() {
+                    int ab = 17;
+                }
+
+                public Test(string message) : this() {
+                    string myMessage = message;
+                }
+            }
+
+            [Inline<Test>]
+            public sealed partial class Derived { }
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                public Derived() {
+                    {
+                    int ab = 17;
+                    }
+                }
+
+                public Derived(string message) : this() {
+                    {
+                    string myMessage = message;
+                    }
+                }
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void Inline_ConstructorWithBaseCall_Works() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test {
+                public Test() {
+                    int ab = 17;
+                }
+
+                public Test(string message) : base() {
+                    string myMessage = message;
+                }
+            }
+
+            [Inline<Test>]
+            public sealed partial class Derived { }
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                public Derived() {
+                    {
+                    int ab = 17;
+                    }
+                }
+
+                public Derived(string message) : base() {
+                    {
+                    string myMessage = message;
                     }
                 }
 
