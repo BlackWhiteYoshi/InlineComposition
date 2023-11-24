@@ -107,9 +107,9 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         TypeDeclarationSyntax inlineClass = (TypeDeclarationSyntax)inlineAttribute.Parent!.Parent!;
         string inlineClassName = inlineClass.Identifier.ValueText;
 
-        HashSet<string> usingStatementList = [];
-        HashSet<string> primaryArgumentsList = [];
-        HashSet<string> baseList = [];
+        List<string> usingStatementList = [];
+        List<string> primaryArgumentsList = [];
+        List<string> baseList = [];
         Dictionary<string, string> fieldList = [];
         Dictionary<string, string> propertyList = [];
         Dictionary<string, string> eventList = [];
@@ -390,7 +390,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
         // usingStatements
         if (usingStatementList.Count > 0) {
-            foreach (string usingStatement in usingStatementList) {
+            foreach (string usingStatement in usingStatementList.Distinct()) {
                 builder.Append("using ");
                 builder.Append(usingStatement);
                 builder.Append(';');
@@ -441,7 +441,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         builder.Append(inlineClass.TypeParameterList?.ToString());
         if (primaryArgumentsList.Count > 0) {
             builder.Append('(');
-            foreach (string argument in primaryArgumentsList) {
+            foreach (string argument in primaryArgumentsList.Distinct()) {
                 builder.Append(argument);
                 builder.Append(',');
                 builder.Append(' ');
@@ -451,7 +451,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         }
         if (baseList.Count > 0) {
             builder.Append(" :");
-            foreach (string baseIdentifier in baseList) {
+            foreach (string baseIdentifier in baseList.Distinct()) {
                 builder.Append(' ');
                 builder.Append(baseIdentifier);
                 builder.Append(',');
