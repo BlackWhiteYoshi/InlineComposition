@@ -338,6 +338,9 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                     }
 
                     case ConstructorDeclarationSyntax constructorDeclarationSyntax: {
+                        if (constructorDeclarationSyntax.Modifiers.Any((SyntaxToken modifier) => modifier.ValueText == "static"))
+                            break;
+
                         string name = inlineClassName;
                         string methodName = CreateMethodName(name, constructorDeclarationSyntax.ParameterList);
                         CaseMethod(name, methodName, constructorDeclarationSyntax, methodList, genericParameters, baseClassNode.genericArguments);

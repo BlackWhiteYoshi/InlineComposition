@@ -958,6 +958,34 @@ public sealed class UnitTests {
     }
 
     [Fact]
+    public void Inline_StaticConstructor_IsIgnored() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test {
+                static Test() { }
+            }
+
+            [Inline<Test>]
+            public sealed partial class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _).Last();
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
     public void Inline_PrimaryConstructor_Works() {
         const string input = """
             using InlineCompositionAttributes;
