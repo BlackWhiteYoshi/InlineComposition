@@ -15,7 +15,7 @@ public static partial class Attributes {
         /// The Method under this attribute will be inlined in the constructor.
         /// </summary>
         [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{AssemblyInfo.NAME}}", "{{AssemblyInfo.VERSION}}")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
         internal sealed class InlineConstructorAttribute : Attribute {
             /// <summary>
             /// <para>Modifiers e.g. "public", "protected", "private"</para>

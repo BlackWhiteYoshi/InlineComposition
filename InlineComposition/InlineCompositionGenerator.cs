@@ -434,7 +434,6 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         }
 
         // class/struct declaration
-        builder.Append($"[System.CodeDom.Compiler.GeneratedCodeAttribute(\"{AssemblyInfo.NAME}\", \"{AssemblyInfo.VERSION}\")]\n");
         foreach (SyntaxToken token in inlineClass.Modifiers) {
             builder.Append(token.ValueText);
             builder.Append(' ');

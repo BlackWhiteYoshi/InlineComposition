@@ -15,7 +15,7 @@ public static partial class Attributes {
         /// The Method under this attribute will be inlined in the method given by <see cref="MethodName"/>.
         /// </summary>
         [AttributeUsage(AttributeTargets.Method)]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{AssemblyInfo.NAME}}", "{{AssemblyInfo.VERSION}}")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
         internal sealed class InlineMethodAttribute : Attribute {
             /// <summary>
             /// The method name as string literal.
