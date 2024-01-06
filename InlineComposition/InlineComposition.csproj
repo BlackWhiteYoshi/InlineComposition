@@ -31,7 +31,7 @@
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
     
-    <Version>1.0.8</Version>
+    <Version>1.0.9</Version>
   </PropertyGroup>
   
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
