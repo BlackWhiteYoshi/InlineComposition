@@ -73,7 +73,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -106,7 +106,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -136,7 +136,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -175,7 +175,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -207,7 +207,7 @@ public sealed class UnitTests {
             public sealed partial class Derived;
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -233,7 +233,7 @@ public sealed class UnitTests {
             public sealed partial class Derived;
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -274,7 +274,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -327,7 +327,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -370,7 +370,7 @@ public sealed class UnitTests {
             }
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -426,7 +426,7 @@ public sealed class UnitTests {
             }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -516,7 +516,7 @@ public sealed class UnitTests {
             }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -618,7 +618,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -661,7 +661,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -701,7 +701,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -747,7 +747,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -794,7 +794,7 @@ public sealed class UnitTests {
             }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -840,7 +840,7 @@ public sealed class UnitTests {
             }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -886,7 +886,7 @@ public sealed class UnitTests {
             }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -933,7 +933,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -973,7 +973,7 @@ public sealed class UnitTests {
             public sealed partial class Derived;
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -999,7 +999,7 @@ public sealed class UnitTests {
             public sealed partial class Derived;
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1030,7 +1030,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1071,7 +1071,7 @@ public sealed class UnitTests {
             }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1116,7 +1116,7 @@ public sealed class UnitTests {
             }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1164,7 +1164,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1197,7 +1197,7 @@ public sealed class UnitTests {
             public sealed partial class Derived;
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1226,7 +1226,7 @@ public sealed class UnitTests {
             public sealed partial class Derived;
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1266,7 +1266,7 @@ public sealed class UnitTests {
             public sealed partial class Derived : N, IN { }
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1303,7 +1303,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
 
@@ -1341,7 +1341,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1385,7 +1385,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1425,7 +1425,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1471,7 +1471,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1566,7 +1566,7 @@ public sealed class UnitTests {
             }
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = """
             // <auto-generated/>
@@ -1602,7 +1602,7 @@ public sealed class UnitTests {
             }
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1635,7 +1635,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1666,7 +1666,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1699,7 +1699,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1736,7 +1736,7 @@ public sealed class UnitTests {
             public sealed partial class Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1766,7 +1766,7 @@ public sealed class UnitTests {
             public partial struct Derived { }
             
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1796,7 +1796,7 @@ public sealed class UnitTests {
             public partial struct Derived { }
 
             """;
-        string sourceText = GenerateSourceText(input, out _, out _).Last();
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
 
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
