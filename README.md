@@ -569,3 +569,20 @@ public partial class Derived
     public int MyProperty { get; set; }
 }
 ```
+
+
+
+<br></br>
+## Disable Attribute Generation
+
+You can disable the generation of the attributes by defining a constant for your compilation:
+
+```xml
+  <PropertyGroup>
+    <DefineConstants>INLINECOMPOSITION_EXCLUDE_ATTRIBUTES</DefineConstants>
+  </PropertyGroup>
+```
+
+This functionality is specific for the use case when you have a project referencing another project, both projects using this generator and you have <i>InternalsVisibleTo</i> enabled.
+In that case you have the attributes defined twice in your referencing project and you get a warning about that.
+By defining this constant in your referencing project, you prevent one generation, so the attributes are only defined once in the referenced project.

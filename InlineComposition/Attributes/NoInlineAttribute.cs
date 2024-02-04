@@ -7,6 +7,8 @@ public static partial class Attributes {
         #nullable enable annotations
     
     
+        #if !INLINECOMPOSITION_EXCLUDE_ATTRIBUTES
+        
         using System;
     
         namespace InlineCompositionAttributes;
@@ -18,6 +20,8 @@ public static partial class Attributes {
         [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
         [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
         internal sealed class NoInlineAttribute : Attribute { }
+
+        #endif
     
         """;
 }

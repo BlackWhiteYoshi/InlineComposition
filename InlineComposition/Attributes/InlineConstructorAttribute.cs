@@ -7,6 +7,8 @@ public static partial class Attributes {
         #nullable enable annotations
     
     
+        #if !INLINECOMPOSITION_EXCLUDE_ATTRIBUTES
+        
         using System;
     
         namespace InlineCompositionAttributes;
@@ -28,6 +30,8 @@ public static partial class Attributes {
             /// </summary>
             public bool First { get; init; }
         }
+
+        #endif
     
         """;
 }
