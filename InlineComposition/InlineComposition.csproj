@@ -50,6 +50,11 @@
     <PackageReference Include="PolySharp" Version="1.14.1" PrivateAssets="all" />
   </ItemGroup>
 
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.1" PrivateAssets="all" GeneratePathProperty="true" />
+  </ItemGroup>
+  
   <PropertyGroup>
     <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
   </PropertyGroup>
@@ -57,6 +62,9 @@
   <Target Name="GetDependencyTargetPaths">
     <ItemGroup>
       <None Include="$(OutputPath)\$(AssemblyName).dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
+
+      <TargetPathWithTargetPlatformMoniker Include="$(PKGMicrosoft_Extensions_ObjectPool)\lib\netstandard2.0\Microsoft.Extensions.ObjectPool.dll" IncludeRuntimeDependency="false" />
+      <None Include="$(PKGMicrosoft_Extensions_ObjectPool)\lib\netstandard2.0\*.dll" Pack="true" PackagePath="analyzers/dotnet/cs" Visible="false" />
     </ItemGroup>
   </Target>
 
