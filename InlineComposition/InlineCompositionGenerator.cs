@@ -149,7 +149,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                     if (attributeArgument.NameEquals?.Name.Identifier.ValueText == "MethodName") {
                         if (attributeArgument.Expression is LiteralExpressionSyntax literal) {
                             string name = literal.Token.ValueText;
-                            MethodDeclarationSyntax methodDeclaration = (MethodDeclarationSyntax)node;
+                            BaseMethodDeclarationSyntax methodDeclaration = (BaseMethodDeclarationSyntax)node;
                             string methodName = CreateMethodName(name, methodDeclaration.ParameterList);
                             CaseCore(name, methodName, AddMethodHead, inlineMethodAttribute, methodList);
                         }
@@ -160,7 +160,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 AttributeSyntax? inlineConstructorAttribute = node.GetAttribute("InlineConstructor", "InlineConstructorAttribute");
                 if (inlineConstructorAttribute != null) {
                     string name = inlineClassName;
-                    MethodDeclarationSyntax derivedConstructorMethod = (MethodDeclarationSyntax)node;
+                    BaseMethodDeclarationSyntax derivedConstructorMethod = (BaseMethodDeclarationSyntax)node;
                     string methodName = CreateMethodName(name, derivedConstructorMethod.ParameterList);
                     CaseCore(name, methodName, AddConDestructorHead, inlineConstructorAttribute, methodList);
                 }
@@ -173,7 +173,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 }
             }
 
-            static void CaseCore(string name, string methodName, Action<MethodDeclarationSyntax, List<string>, string, string?, string[], string[]> AddHeadMethod, AttributeSyntax attribute, Dictionary<string, MethodEntry> methodList, string? modifiers = null) {
+            static void CaseCore(string name, string methodName, Action<BaseMethodDeclarationSyntax, List<string>, string, string?, string[], string[]> AddHeadMethod, AttributeSyntax attribute, Dictionary<string, MethodEntry> methodList, string? modifiers = null) {
                 bool first = false;
                 if (attribute.ArgumentList is AttributeArgumentListSyntax attributeArgumentList)
                     foreach (AttributeArgumentSyntax attributeArgument in attributeArgumentList.Arguments) {
@@ -186,7 +186,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                                 first = boolLiteral.Token.Value as bool? ?? false;
                     }
 
-                MethodDeclarationSyntax method = (MethodDeclarationSyntax)attribute.Parent!.Parent!;
+                BaseMethodDeclarationSyntax method = (BaseMethodDeclarationSyntax)attribute.Parent!.Parent!;
                 MethodEntry entry = new();
 
                 AddHeadMethod(method, entry.headList, name, modifiers, [], []);
@@ -357,11 +357,18 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                         break;
                     }
 
+                    case OperatorDeclarationSyntax operatorDeclarationSyntax: {
+                        string name = $"operator {operatorDeclarationSyntax.OperatorToken.ValueText}";
+                        string methodName = CreateMethodName(name, operatorDeclarationSyntax.ParameterList);
+                        CaseMethod(name, methodName, operatorDeclarationSyntax, methodList, genericParameters, baseClassNode.genericArguments);
+                        break;
+                    }
+
                     static void CaseMethod(string name, string methodName, BaseMethodDeclarationSyntax method, Dictionary<string, MethodEntry> methodList, string[] genericParameters, string[] genericArguments) {
                         if (!methodList.TryGetValue(methodName, out MethodEntry entry)) {
                             entry = new MethodEntry();
-                            if (method is MethodDeclarationSyntax normalMethod)
-                                AddMethodHead(normalMethod, entry.headList, name, null, genericParameters, genericArguments);
+                            if (method is MethodDeclarationSyntax or OperatorDeclarationSyntax)
+                                AddMethodHead(method, entry.headList, name, null, genericParameters, genericArguments);
                             else
                                 AddConDestructorHead(method, entry.headList, name, null, genericParameters, genericArguments);
 
@@ -579,7 +586,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         return result.ToString();
     }
 
-    private static void AddMethodHead(MethodDeclarationSyntax method, List<string> list, string name, string? modifiers, string[] genericParameters, string[] genericArguments) {
+    private static void AddMethodHead(BaseMethodDeclarationSyntax method, List<string> list, string name, string? modifiers, string[] genericParameters, string[] genericArguments) {
         list.Add(method.AttributeLists.ToFullString());
         
         list.Add("    ");
@@ -595,16 +602,21 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 list.Add(" ");
             }
 
-        list.Add(ReplaceGeneric(method.ReturnType.ToString(), genericParameters, genericArguments));
+        (TypeSyntax? returnType, ExplicitInterfaceSpecifierSyntax? explicitInterfaceSpecifier, TypeParameterListSyntax? typeParameterList) = method switch {
+            MethodDeclarationSyntax m => (m.ReturnType, m.ExplicitInterfaceSpecifier, m.TypeParameterList),
+            OperatorDeclarationSyntax o => (o.ReturnType, o.ExplicitInterfaceSpecifier, null),
+            _ => throw new Exception($"Unreachable code: parameter {nameof(method)} must be {nameof(MethodDeclarationSyntax)} or {nameof(OperatorDeclarationSyntax)}")
+        };
+        list.Add(ReplaceGeneric(returnType.ToString(), genericParameters, genericArguments));
         list.Add(" ");
-        if (method.ExplicitInterfaceSpecifier != null) {
-            list.Add(((IdentifierNameSyntax)method.ExplicitInterfaceSpecifier.Name).Identifier.ValueText);
+        if (explicitInterfaceSpecifier != null) {
+            list.Add(((IdentifierNameSyntax)explicitInterfaceSpecifier.Name).Identifier.ValueText);
             list.Add(".");
         }
         list.Add(name);
         
-        if (method.TypeParameterList != null)
-            list.Add(ReplaceGeneric(method.TypeParameterList.ToString(), genericParameters, genericArguments));
+        if (typeParameterList != null)
+            list.Add(ReplaceGeneric(typeParameterList.ToString(), genericParameters, genericArguments));
         list.Add(ReplaceGeneric(method.ParameterList.ToString(), genericParameters, genericArguments));
         list.Add(" ");
     }
@@ -639,8 +651,9 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         if (method.Body != null)
             return method.Body.Statements.ToFullString();
         
-        if (method.ExpressionBody != null) {
-            if (method is MethodDeclarationSyntax normalMethod && ((PredefinedTypeSyntax)normalMethod.ReturnType).Keyword.ValueText != "void")
+        if (method.ExpressionBody != null)
+            if (method is MethodDeclarationSyntax normalMethod && ((PredefinedTypeSyntax)normalMethod.ReturnType).Keyword.ValueText != "void"
+                || method is OperatorDeclarationSyntax operatorMethod && ((PredefinedTypeSyntax)operatorMethod.ReturnType).Keyword.ValueText != "void")
                 return $"""
                                     return {method.ExpressionBody.Expression.ToFullString()};
 
@@ -650,7 +663,6 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                                     {method.ExpressionBody.Expression.ToFullString()};
 
                         """;
-        }
         
         return null;
     }

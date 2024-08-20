@@ -311,6 +311,78 @@ public sealed class UnitTests {
     }
 
     [Fact]
+    public void Inline_Static_Method_Works() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test {
+                public static void StaticMethod() {
+                    int ab = 17;
+                }
+            }
+            
+            [Inline<Test>]
+            public sealed partial class Derived { }
+
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                public static void StaticMethod() {
+                    {
+                    int ab = 17;
+                    }
+                }
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void Inline_Operator_Works() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test {
+                public static bool operator |(Test a, Test b) {
+                    return true;
+                }
+            }
+            
+            [Inline<Test>]
+            public sealed partial class Derived { }
+
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                public static bool operator |(Test a, Test b) {
+                    {
+                    return true;
+                    }
+                }
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
     public void Inline_Extern_Method_Works() {
         const string input = """
             using InlineCompositionAttributes;
@@ -356,6 +428,8 @@ public sealed class UnitTests {
                 }
 
                 private void ExpressionMethod() => System.Console.WriteLine("Base");
+
+                public static void StaticMethod() => System.Console.WriteLine("Base");
             }
 
             [Inline<Test>]
@@ -367,6 +441,9 @@ public sealed class UnitTests {
 
                 [InlineMethod(MethodName = "ExpressionMethod", Modifiers = "public")]
                 private void ExpressionMethodPartial() => System.Console.WriteLine("Derived");
+
+                [InlineMethod(MethodName = "StaticMethod")]
+                public static void StaticMethodPartial() => System.Console.WriteLine("Derived");
             }
 
             """;
@@ -394,6 +471,58 @@ public sealed class UnitTests {
                     }
                     {
                         System.Console.WriteLine("Derived");
+                    }
+                }
+
+
+                [InlineMethod(MethodName = "StaticMethod")]
+                public static void StaticMethod() {
+                    {
+                        System.Console.WriteLine("Base");
+                    }
+                    {
+                        System.Console.WriteLine("Derived");
+                    }
+                }
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void Inline_MethodOperatorMerge_Works() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+            
+            [InlineBase]
+            public sealed class Test {
+                public static bool operator |() => true;
+            }
+
+            [Inline<Test>]
+            public sealed partial class Derived {
+                [InlineMethod(MethodName = "operator |", Modifiers = "public static")]
+                private static bool BarPartial() => false;
+            }
+
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                [InlineMethod(MethodName = "operator |", Modifiers = "public static")]
+                public static bool operator |() {
+                    {
+                        return true;
+                    }
+                    {
+                        return false;
                     }
                 }
 
