@@ -173,7 +173,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 }
             }
 
-            static void CaseCore(string name, string methodName, Action<MethodDeclarationSyntax, List<string>, string, string?> AddHeadMethod, AttributeSyntax attribute, Dictionary<string, MethodEntry> methodList, string? modifiers = null) {
+            static void CaseCore(string name, string methodName, Action<MethodDeclarationSyntax, List<string>, string, string?, string[], string[]> AddHeadMethod, AttributeSyntax attribute, Dictionary<string, MethodEntry> methodList, string? modifiers = null) {
                 bool first = false;
                 if (attribute.ArgumentList is AttributeArgumentListSyntax attributeArgumentList)
                     foreach (AttributeArgumentSyntax attributeArgument in attributeArgumentList.Arguments) {
@@ -189,7 +189,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 MethodDeclarationSyntax method = (MethodDeclarationSyntax)attribute.Parent!.Parent!;
                 MethodEntry entry = new();
 
-                AddHeadMethod(method, entry.headList, name, modifiers);
+                AddHeadMethod(method, entry.headList, name, modifiers, [], []);
 
                 if (first) {
                     string? bodySource = GetMethodBody(method);
@@ -361,9 +361,9 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                         if (!methodList.TryGetValue(methodName, out MethodEntry entry)) {
                             entry = new MethodEntry();
                             if (method is MethodDeclarationSyntax normalMethod)
-                                AddMethodHead(normalMethod, entry.headList, name);
+                                AddMethodHead(normalMethod, entry.headList, name, null, genericParameters, genericArguments);
                             else
-                                AddConDestructorHead(method, entry.headList, name);
+                                AddConDestructorHead(method, entry.headList, name, null, genericParameters, genericArguments);
 
                             methodList.Add(methodName, entry);
                         }
@@ -542,44 +542,21 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
     /// <param name="functionName"></param>
     /// <param name="parameterList"></param>
     /// <returns></returns>
-    /// <exception cref="NotSupportedException"></exception>
-    /// <exception cref="Exception"></exception>
+    /// <exception cref="NotSupportedException">function pointers are not supported</exception>
+    /// <exception cref="Exception">When there is a unexpected syntax node. Should never happen.</exception>
     private static string CreateMethodName(string functionName, ParameterListSyntax parameterList) {
         if (parameterList.Parameters.Count == 0)
             return functionName;
 
         string[] parameters = new string[parameterList.Parameters.Count];
-        for (int i = 0; i < parameterList.Parameters.Count; i++) {
-            TypeSyntax typeSyntax = parameterList.Parameters[i].Type!;
-            while (true) {
-                if (typeSyntax is PredefinedTypeSyntax predefinedType) {
-                    parameters[i] = predefinedType.Keyword.ValueText;
-                    break;
-                }
-                if (typeSyntax is IdentifierNameSyntax identifierName) {
-                    parameters[i] = identifierName.Identifier.ValueText;
-                    break;
-                }
-                if (typeSyntax is TupleTypeSyntax tupleTypeSyntax) {
-                    parameters[i] = tupleTypeSyntax.Elements.ToFullString();
-                    break;
-                }
-
-                typeSyntax = typeSyntax switch {
-                    ArrayTypeSyntax arrayType => arrayType.ElementType,
-                    NullableTypeSyntax nullableType => nullableType.ElementType,
-                    RefTypeSyntax refType => refType.Type,
-                    PointerTypeSyntax pointerType => pointerType.ElementType,
-                    FunctionPointerTypeSyntax => throw new NotSupportedException("function pointers are not supported"),
-                    _ => throw new Exception($"No Match for parameterType {typeSyntax}: {typeSyntax.GetType()}")
-                };
-            }
-        }
+        for (int i = 0; i < parameterList.Parameters.Count; i++)
+            parameters[i] = parameterList.Parameters[i].Type!.ToString();
 
         int length = functionName.Length + 1;
         foreach (string parameter in parameters)
             length += parameter.Length;
         length += parameters.Length;
+        
         Span<char> result = (length < 1024) switch {
             true => stackalloc char[length],
             false => new char[length]
@@ -602,7 +579,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         return result.ToString();
     }
 
-    private static void AddMethodHead(MethodDeclarationSyntax method, List<string> list, string name, string? modifiers = null) {
+    private static void AddMethodHead(MethodDeclarationSyntax method, List<string> list, string name, string? modifiers, string[] genericParameters, string[] genericArguments) {
         list.Add(method.AttributeLists.ToFullString());
         
         list.Add("    ");
@@ -618,26 +595,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 list.Add(" ");
             }
 
-        switch (method.ReturnType) {
-            case PredefinedTypeSyntax predefinedType:
-                list.Add(predefinedType.Keyword.ValueText);
-                break;
-            case SimpleNameSyntax simpleNameSyntax:
-                list.Add(simpleNameSyntax.Identifier.ValueText);
-                break;
-            case RefTypeSyntax refTypeSyntax:
-                if (refTypeSyntax.ReadOnlyKeyword.ValueText != string.Empty) {
-                    list.Add(refTypeSyntax.ReadOnlyKeyword.ValueText);
-                    list.Add(" ");
-                }
-                list.Add(refTypeSyntax.RefKeyword.ValueText);
-                list.Add(" ");
-                list.Add(((PredefinedTypeSyntax)refTypeSyntax.Type).Keyword.ValueText);
-                break;
-            default:
-                throw new Exception("No matching SyntaxType for returnType: cannot identify value of returnType");
-        }
-        
+        list.Add(ReplaceGeneric(method.ReturnType.ToString(), genericParameters, genericArguments));
         list.Add(" ");
         if (method.ExplicitInterfaceSpecifier != null) {
             list.Add(((IdentifierNameSyntax)method.ExplicitInterfaceSpecifier.Name).Identifier.ValueText);
@@ -646,12 +604,12 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         list.Add(name);
         
         if (method.TypeParameterList != null)
-            list.Add(method.TypeParameterList.ToString());
-        list.Add(method.ParameterList.ToString());
+            list.Add(ReplaceGeneric(method.TypeParameterList.ToString(), genericParameters, genericArguments));
+        list.Add(ReplaceGeneric(method.ParameterList.ToString(), genericParameters, genericArguments));
         list.Add(" ");
     }
 
-    private static void AddConDestructorHead(BaseMethodDeclarationSyntax method, List<string> list, string name, string? modifiers = null) {
+    private static void AddConDestructorHead(BaseMethodDeclarationSyntax method, List<string> list, string name, string? modifiers, string[] genericParameters, string[] genericArguments) {
         list.Add(method.AttributeLists.ToFullString());
         list.Add("    ");
         if (modifiers != null) {
@@ -666,7 +624,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 list.Add(" ");
             }
         list.Add(name);
-        list.Add(method.ParameterList.ToString());
+        list.Add(ReplaceGeneric(method.ParameterList.ToString(), genericParameters, genericArguments));
 
         if (method is ConstructorDeclarationSyntax { Initializer: not null } constructor) {
             list.Add(" : ");
@@ -735,6 +693,9 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                             state = 0;
                         break;
                 }
+
+            if (state == 2)
+                replaceIndexList.Add((source.Length - parameters[i].Length, i));
         }
 
         if (replaceIndexList.Count == 0)

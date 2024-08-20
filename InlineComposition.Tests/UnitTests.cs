@@ -1693,6 +1693,8 @@ public sealed class UnitTests {
                     T variable1 = default;
                     U variable2 = default;
                 }
+
+                public T GenericParameter(System.Collections.Generic.List<T> list) { }
             }
 
             [Inline<Test<string>>]
@@ -1711,6 +1713,11 @@ public sealed class UnitTests {
                     {
                     string variable1 = default;
                     U variable2 = default;
+                    }
+                }
+
+                public string GenericParameter(System.Collections.Generic.List<string> list) {
+                    {
                     }
                 }
 
