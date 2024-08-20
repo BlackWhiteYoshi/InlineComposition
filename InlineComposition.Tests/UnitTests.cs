@@ -1824,6 +1824,8 @@ public sealed class UnitTests {
                 }
 
                 public T GenericParameter(System.Collections.Generic.List<T> list) { }
+
+                public T Id(T t) => default!;
             }
 
             [Inline<Test<string>>]
@@ -1847,6 +1849,12 @@ public sealed class UnitTests {
 
                 public string GenericParameter(System.Collections.Generic.List<string> list) {
                     {
+                    }
+                }
+
+                public string Id(string t) {
+                    {
+                        return default!;
                     }
                 }
 

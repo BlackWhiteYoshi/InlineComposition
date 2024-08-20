@@ -652,8 +652,8 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             return method.Body.Statements.ToFullString();
         
         if (method.ExpressionBody != null)
-            if (method is MethodDeclarationSyntax normalMethod && ((PredefinedTypeSyntax)normalMethod.ReturnType).Keyword.ValueText != "void"
-                || method is OperatorDeclarationSyntax operatorMethod && ((PredefinedTypeSyntax)operatorMethod.ReturnType).Keyword.ValueText != "void")
+            if (method is MethodDeclarationSyntax normalMethod && normalMethod.ReturnType.ToString() != "void"
+                || method is OperatorDeclarationSyntax operatorMethod && operatorMethod.ReturnType.ToString() != "void")
                 return $"""
                                     return {method.ExpressionBody.Expression.ToFullString()};
 
