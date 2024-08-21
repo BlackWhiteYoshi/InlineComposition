@@ -1742,6 +1742,38 @@ public sealed class UnitTests {
         Assert.Equal(expected, sourceText);
     }
 
+    [Fact]
+    public void InlineAttributes() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [TestAttribute]
+            [InlineBase(InlineAttributes = true)]
+            public struct Test;
+
+            [TestAttribute]
+            [InlineBase(InlineAttributes = false)]
+            public struct Test2;
+            
+            [Inline<Test, Test2>]
+            public sealed partial class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+            
+            [TestAttribute]
+            public sealed partial class Derived {
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
     #endregion
 
 

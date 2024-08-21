@@ -112,6 +112,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         string inlineClassName = inlineClass.Identifier.ValueText;
 
         List<string> usingStatementList = [];
+        List<string> attributeList = [];
         List<string> primaryArgumentsList = [];
         List<string> baseList = [];
         Dictionary<string, string> fieldList = [];
@@ -236,6 +237,11 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                             if (attributeArgument.NameEquals?.Name.Identifier.ValueText == "IgnoreInheritenceAndImplements")
                                 if (attributeArgument.Expression is LiteralExpressionSyntax literalExpression)
                                     baseClassNodes[i].ignoreInheritenceAndImplements = (bool)literalExpression.Token.Value!;
+
+                            // check for InlineAttributes
+                            if (attributeArgument.NameEquals?.Name.Identifier.ValueText == "InlineAttributes")
+                                if (attributeArgument.Expression is LiteralExpressionSyntax literalExpression)
+                                    baseClassNodes[i].inlineAttributes = (bool)literalExpression.Token.Value!;
                         }
 
 
@@ -322,6 +328,12 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                         if (usingSyntax.Name != null)
                             usingStatementList.Add(usingSyntax.Name.ToFullString());
             }
+
+            // attributes
+            if (baseClassNode.inlineAttributes)
+                foreach (AttributeListSyntax attributeListSyntax in classType.AttributeLists)
+                    if (attributeListSyntax.Attributes is [AttributeSyntax { Name: not IdentifierNameSyntax { Identifier.ValueText: "InlineBase" or "InlineBaseAttribute" } }, ..])
+                        attributeList.Add(attributeListSyntax.ToString());
 
             // primary constructor parameters
             if (classType.ParameterList != null)
@@ -482,6 +494,12 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             }
             else
                 classNamespace = string.Empty;
+        }
+
+        // attributes
+        foreach (string attribute in attributeList) {
+            builder.Append(attribute);
+            builder.Append('\n');
         }
 
         // class/struct declaration

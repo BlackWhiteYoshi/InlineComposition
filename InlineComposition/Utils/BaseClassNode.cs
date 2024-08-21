@@ -9,5 +9,6 @@ internal struct BaseClassNode() {
     public TypeDeclarationSyntax? baseClass;
     public bool mapBaseType = false;
     public bool ignoreInheritenceAndImplements = false;
+    public bool inlineAttributes = false;
     public string[] genericArguments = [];
 }

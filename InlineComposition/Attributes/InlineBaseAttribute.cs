@@ -29,6 +29,12 @@ public static partial class Attributes {
             /// If set the generator ignores the inherited class and implemented interfaces of this type.
             /// </summary>
             public bool IgnoreInheritenceAndImplements { get; init; }
+
+            /// <summary>
+            /// If set attributes of this class/struct are inlined as well.<br />
+            /// The attribute [InlineBase] itself is ignored.
+            /// </summary>
+            public bool InlineAttributes { get; init; }
         }
 
         #endif
