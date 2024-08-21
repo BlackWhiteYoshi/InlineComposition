@@ -211,7 +211,7 @@ public class MyClass { ... }
 
 #### MapBaseType
 
-If this flag is set to true, all occurrences of the type of the inlineBase class/struct get replaced with the type of the inlining class/struct..
+If this flag is set to true, all occurrences of the type of the inlineBase class/struct get replaced with the type of the inlining class/struct.
 
 ```csharp
 using InlineCompositionAttributes;

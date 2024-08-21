@@ -43,7 +43,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         if (syntaxNode is not AttributeSyntax attributeSyntax)
             return false;
 
-        if (attributeSyntax.Parent?.Parent is not (ClassDeclarationSyntax or StructDeclarationSyntax))
+        if (attributeSyntax.Parent?.Parent is not (ClassDeclarationSyntax or StructDeclarationSyntax or RecordDeclarationSyntax))
             return false;
 
 
@@ -491,6 +491,10 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         }
         builder.Append(inlineClass.Keyword.ValueText);
         builder.Append(' ');
+        if (inlineClass is RecordDeclarationSyntax recordDeclarationSyntax && recordDeclarationSyntax.ClassOrStructKeyword.ValueText is string { Length: >0 } classStructKeyword) {
+            builder.Append(classStructKeyword);
+            builder.Append(' ');
+        }
         builder.Append(inlineClassName);
         builder.Append(inlineClass.TypeParameterList?.ToString());
         if (primaryArgumentsList.Count > 0) {

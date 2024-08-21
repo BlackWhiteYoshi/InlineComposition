@@ -1946,6 +1946,38 @@ public sealed class UnitTests {
         Assert.Equal(expected, sourceText);
     }
 
+
+
+    [Fact]
+    public void ClassWithClass() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public class Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public sealed partial class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
     [Fact]
     public void ClassWithStruct() {
         const string input = """
@@ -1968,6 +2000,97 @@ public sealed class UnitTests {
             {{GENERATED_SOURCE_HEAD}}
 
             public sealed partial class Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void ClassWithRecordClass() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public class record Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public sealed partial class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void ClassWithRecordStruct() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public struct record Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public sealed partial class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+
+    [Fact]
+    public void StructWithClass() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed class Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public partial struct Derived;
+
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public partial struct Derived {
                 public int myField = 5;
 
             }
@@ -2007,14 +2130,14 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void StructWithClass() {
+    public void StructWithRecordClass() {
         const string input = """
             using InlineCompositionAttributes;
             
             namespace MyCode;
 
             [InlineBase]
-            public sealed class Test {
+            public sealed record class Test {
                 public int myField = 5;
             }
 
@@ -2028,6 +2151,278 @@ public sealed class UnitTests {
             {{GENERATED_SOURCE_HEAD}}
 
             public partial struct Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void StructWithRecordStruct() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public sealed record struct Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public partial struct Derived;
+
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public partial struct Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+
+    [Fact]
+    public void RecordClassWithClass() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public class Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public sealed partial record Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial record Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void RecordClassWithStruct() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public struct Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public sealed partial record class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial record class Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void RecordClassWithRecordClass() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public record class Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public sealed partial record class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial record class Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void RecordClassWithRecordStruct() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public record struct Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public sealed partial record class Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial record class Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+
+    [Fact]
+    public void RecordStructWithClass() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public class Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public partial record struct Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public partial record struct Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void RecordStructWithStruct() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public struct Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public partial record struct Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public partial record struct Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void RecordStructWithRecordClass() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public record Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public partial record struct Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public partial record struct Derived {
+                public int myField = 5;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void RecordStructWithRecordStruct() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase]
+            public record struct Test {
+                public int myField = 5;
+            }
+
+            [Inline<Test>]
+            public partial record struct Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public partial record struct Derived {
                 public int myField = 5;
 
             }
