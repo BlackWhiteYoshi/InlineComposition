@@ -1909,12 +1909,12 @@ public sealed class UnitTests {
             namespace MyCode;
 
             [InlineBase(MapBaseType = true)]
-            public struct Test<T> {
+            public struct Test<T> : IEquatable<Test<T>> {
                 public Test<T> A(Test<T> t, T t2) => null!;
             }
 
             [InlineBase(MapBaseType = false]
-            public struct Test2<T> {
+            public struct Test2<T> : IComparable<T> {
                 public Test<T> B(Test<T> t, T t2) => null!;
             }
             
@@ -1927,7 +1927,7 @@ public sealed class UnitTests {
         const string expected = $$"""
             {{GENERATED_SOURCE_HEAD}}
 
-            public partial struct Derived {
+            public partial struct Derived : IEquatable<Derived>, IComparable<string> {
                 public Derived A(Derived t, string t2) {
                     {
                         return null!;

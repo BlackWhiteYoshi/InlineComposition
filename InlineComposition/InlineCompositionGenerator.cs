@@ -275,34 +275,6 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             if (classType == null)
                 continue;
 
-            // usings
-            {
-                BaseNamespaceDeclarationSyntax? namspace = classType.GetParent<BaseNamespaceDeclarationSyntax>();
-                while (namspace != null) {
-                    foreach (UsingDirectiveSyntax usingSyntax in namspace.Usings)
-                        if (usingSyntax.Name != null)
-                            usingStatementList.Add(usingSyntax.Name.ToFullString());
-
-                    namspace = namspace.GetParent<BaseNamespaceDeclarationSyntax>();
-                }
-
-                CompilationUnitSyntax? compilationUnit = classType.GetParent<CompilationUnitSyntax>();
-                if (compilationUnit != null)
-                    foreach (UsingDirectiveSyntax usingSyntax in compilationUnit.Usings)
-                        if (usingSyntax.Name != null)
-                            usingStatementList.Add(usingSyntax.Name.ToFullString());
-            }
-
-            // primary constructor parameters
-            if (classType.ParameterList != null)
-                foreach (ParameterSyntax parameter in classType.ParameterList.Parameters)
-                    primaryArgumentsList.Add(parameter.ToString());
-
-            // baseclasses and interfaces
-            if (!baseClassNode.ignoreInheritenceAndImplements && classType.BaseList != null)
-                foreach (BaseTypeSyntax baseTypeSyntax in classType.BaseList.Types)
-                    baseList.Add(baseTypeSyntax.ToString());
-
             // generic parameters
             string[] genericParameters;
             switch ((baseClassNode.mapBaseType, classType.TypeParameterList)) {
@@ -332,6 +304,34 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                     break;
                 }
             }
+
+            // usings
+            {
+                BaseNamespaceDeclarationSyntax? namspace = classType.GetParent<BaseNamespaceDeclarationSyntax>();
+                while (namspace != null) {
+                    foreach (UsingDirectiveSyntax usingSyntax in namspace.Usings)
+                        if (usingSyntax.Name != null)
+                            usingStatementList.Add(usingSyntax.Name.ToFullString());
+
+                    namspace = namspace.GetParent<BaseNamespaceDeclarationSyntax>();
+                }
+
+                CompilationUnitSyntax? compilationUnit = classType.GetParent<CompilationUnitSyntax>();
+                if (compilationUnit != null)
+                    foreach (UsingDirectiveSyntax usingSyntax in compilationUnit.Usings)
+                        if (usingSyntax.Name != null)
+                            usingStatementList.Add(usingSyntax.Name.ToFullString());
+            }
+
+            // primary constructor parameters
+            if (classType.ParameterList != null)
+                foreach (ParameterSyntax parameter in classType.ParameterList.Parameters)
+                    primaryArgumentsList.Add(ReplaceGeneric(parameter.ToString(), genericParameters, baseClassNode.genericArguments));
+
+            // baseclasses and interfaces
+            if (!baseClassNode.ignoreInheritenceAndImplements && classType.BaseList != null)
+                foreach (BaseTypeSyntax baseTypeSyntax in classType.BaseList.Types)
+                    baseList.Add(ReplaceGeneric(baseTypeSyntax.ToString(), genericParameters, baseClassNode.genericArguments));
 
             // members
             foreach (MemberDeclarationSyntax node in classType.Members) {
