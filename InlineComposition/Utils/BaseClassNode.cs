@@ -7,6 +7,7 @@ namespace InlineComposition;
 /// </summary>
 internal struct BaseClassNode() {
     public TypeDeclarationSyntax? baseClass;
+    public bool mapBaseType = false;
     public bool ignoreInheritenceAndImplements = false;
-    public string[] genericArguments = Array.Empty<string>();
+    public string[] genericArguments = [];
 }

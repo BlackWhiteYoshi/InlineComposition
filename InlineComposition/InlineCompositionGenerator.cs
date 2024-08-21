@@ -224,24 +224,45 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 if (name == baseClass?.Identifier.ValueText) {
                     baseClassNodes[i].baseClass = baseClass;
 
-                    // check for IgnoreInheritenceAndImplements
-                    AttributeSyntax? attribute = baseAttributes[i];
-                    if (attribute!.ArgumentList?.Arguments.Count > 0)
-                        if (attribute!.ArgumentList.Arguments[0].Expression is LiteralExpressionSyntax literalExpression)
-                            baseClassNodes[i].ignoreInheritenceAndImplements = (bool)literalExpression.Token.Value!;
+                    AttributeSyntax attribute = baseAttributes[i]!;
+                    if (attribute.ArgumentList != null)
+                        foreach (AttributeArgumentSyntax attributeArgument in attribute.ArgumentList.Arguments) {
+                            // check for MapBaseType
+                            if (attributeArgument.NameEquals?.Name.Identifier.ValueText == "MapBaseType")
+                                if (attributeArgument.Expression is LiteralExpressionSyntax literalExpression)
+                                    baseClassNodes[i].mapBaseType = (bool)literalExpression.Token.Value!;
 
-                    // extract generic arguments
+                            // check for IgnoreInheritenceAndImplements
+                            if (attributeArgument.NameEquals?.Name.Identifier.ValueText == "IgnoreInheritenceAndImplements")
+                                if (attributeArgument.Expression is LiteralExpressionSyntax literalExpression)
+                                    baseClassNodes[i].ignoreInheritenceAndImplements = (bool)literalExpression.Token.Value!;
+                        }
+
+
+                    // extract generic arguments (prepend mapping to baseType)
                     if (arguments[i] is GenericNameSyntax genericNameSyntax) {
                         SeparatedSyntaxList<TypeSyntax> genericArguments = genericNameSyntax.TypeArgumentList.Arguments;
-                        baseClassNodes[i].genericArguments = new string[genericArguments.Count];
+                        int offset;
+                        if (baseClassNodes[i].mapBaseType) {
+                            offset = 1;
+                            baseClassNodes[i].genericArguments = new string[genericArguments.Count + 1];
+                            baseClassNodes[i].genericArguments[0] = $"{derivedClass.Identifier.ValueText}{derivedClass.TypeParameterList?.ToString()}";
+                        }
+                        else {
+                            offset = 0;
+                            baseClassNodes[i].genericArguments = new string[genericArguments.Count];
+                        }
+
                         for (int j = 0; j < genericArguments.Count; j++)
-                            baseClassNodes[i].genericArguments[j] = genericArguments[j] switch {
+                            baseClassNodes[i].genericArguments[j + offset] = genericArguments[j] switch {
                                 PredefinedTypeSyntax predefinedType => predefinedType.Keyword.ValueText,
                                 SimpleNameSyntax simpleNameSyntax => simpleNameSyntax.Identifier.ValueText,
                                 QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
                                 _ => throw new Exception("No matching SyntaxType for generic argument: cannot identify value of generic argument")
                             };
                     }
+                    else if (baseClassNodes[i].mapBaseType)
+                        baseClassNodes[i].genericArguments = [$"{derivedClass.Identifier.ValueText}{derivedClass.TypeParameterList?.ToString()}"];
                 }
             }
         }
@@ -284,13 +305,31 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
             // generic parameters
             string[] genericParameters;
-            if (classType.TypeParameterList == null)
-                genericParameters = [];
-            else {
-                SeparatedSyntaxList<TypeParameterSyntax> genericParameterList = classType.TypeParameterList.Parameters;
-                genericParameters = new string[genericParameterList.Count];
-                for (int i = 0; i < genericParameterList.Count; i++) {
-                    genericParameters[i] = genericParameterList[i].Identifier.ValueText;
+            switch ((baseClassNode.mapBaseType, classType.TypeParameterList)) {
+                case (true, not null): {
+                    SeparatedSyntaxList<TypeParameterSyntax> genericParameterList = classType.TypeParameterList.Parameters;
+                    genericParameters = new string[genericParameterList.Count + 1];
+                    genericParameters[0] = $"{classType.Identifier.ValueText}{classType.TypeParameterList?.ToString()}";
+                    for (int i = 0; i < genericParameterList.Count; i++) {
+                        genericParameters[i + 1] = genericParameterList[i].Identifier.ValueText;
+                    }
+                    break;
+                }
+                case (false, not null): {
+                    SeparatedSyntaxList<TypeParameterSyntax> genericParameterList = classType.TypeParameterList.Parameters;
+                    genericParameters = new string[genericParameterList.Count];
+                    for (int i = 0; i < genericParameterList.Count; i++) {
+                        genericParameters[i] = genericParameterList[i].Identifier.ValueText;
+                    }
+                    break;
+                }
+                case (true, null): {
+                    genericParameters = [classType.Identifier.ValueText];
+                    break;
+                }
+                case (false, null): {
+                    genericParameters = [];
+                    break;
                 }
             }
 
@@ -716,8 +755,22 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
 
         int extraSpace = 0;
-        foreach ((_, int paraIndex) in replaceIndexList)
-            extraSpace += (arguments[paraIndex].Length - parameters[paraIndex].Length);
+        {
+            int lastIndex = 0;
+            for (int i = 0; i < replaceIndexList.Count; i++) {
+                int index = replaceIndexList[i].index;
+                int paraIndex = replaceIndexList[i].paraIndex;
+
+                // remove overlapping replacements
+                if (index < lastIndex) {
+                    replaceIndexList.RemoveAt(i--);
+                    continue;
+                }
+
+                lastIndex = index + parameters[paraIndex].Length;
+                extraSpace += arguments[paraIndex].Length - parameters[paraIndex].Length;
+            }
+        }
 
         string result = new('\0', source.Length + extraSpace);
         int currentIndex = 0;

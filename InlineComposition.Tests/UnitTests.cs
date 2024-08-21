@@ -56,7 +56,7 @@ public sealed class UnitTests {
     #region field, property, event
 
     [Fact]
-    public void Inline_Field_Works() {
+    public void Inline_Field() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -70,7 +70,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
 
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -91,7 +91,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_Property_Works() {
+    public void Inline_Property() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -103,7 +103,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -121,7 +121,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_Event_Works() {
+    public void Inline_Event() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -133,7 +133,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -156,7 +156,7 @@ public sealed class UnitTests {
     #region head - Comments and BaseClasses
 
     [Fact]
-    public void Inline_AttributeAndComment_Works() {
+    public void Inline_AttributeAndComment() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -172,7 +172,7 @@ public sealed class UnitTests {
             }
             
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
 
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -194,7 +194,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_BaseClassAndInterfaces_Works() {
+    public void Inline_BaseClassAndInterfaces() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -220,7 +220,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_BaseClassWithPrimaryConstructor_Works() {
+    public void Inline_BaseClassWithPrimaryConstructor() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -251,7 +251,7 @@ public sealed class UnitTests {
     #region Method, Constructor, Finalizer
 
     [Fact]
-    public void Inline_Method_Works() {
+    public void Inline_Method() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -271,7 +271,7 @@ public sealed class UnitTests {
             }
             
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
 
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -311,7 +311,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_Static_Method_Works() {
+    public void Inline_Static_Method() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -325,7 +325,7 @@ public sealed class UnitTests {
             }
             
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
 
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -347,7 +347,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_Operator_Works() {
+    public void Inline_Operator() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -361,7 +361,7 @@ public sealed class UnitTests {
             }
             
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
 
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -383,7 +383,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_Extern_Method_Works() {
+    public void Inline_Extern_Method() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -396,7 +396,7 @@ public sealed class UnitTests {
             }
             
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
 
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -415,7 +415,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_MethodMerge_Works() {
+    public void Inline_MethodMerge() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -492,7 +492,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_MethodOperatorMerge_Works() {
+    public void Inline_MethodOperatorMerge() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -533,7 +533,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_MethodMergePrepend_Works() {
+    public void Inline_MethodMergePrepend() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -578,7 +578,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_Method_ParameterAnyOrder_Works() {
+    public void Inline_Method_ParameterAnyOrder() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -744,7 +744,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test, Test2>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -773,7 +773,7 @@ public sealed class UnitTests {
 
 
     [Fact]
-    public void Inline_Constructor_Works() {
+    public void Inline_Constructor() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -787,7 +787,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -809,7 +809,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_ConstructorWithThisCall_Works() {
+    public void Inline_ConstructorWithThisCall() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -827,7 +827,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -855,7 +855,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_ConstructorWithBaseCall_Works() {
+    public void Inline_ConstructorWithBaseCall() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -873,7 +873,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -901,7 +901,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_ConstructorMerge_Works() {
+    public void Inline_ConstructorMerge() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -946,7 +946,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_ConstructorMergePrepend_Works() {
+    public void Inline_ConstructorMergePrepend() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -992,7 +992,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_Constructor_ParameterOtherOrder_Works() {
+    public void Inline_Constructor_ParameterOtherOrder() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1059,7 +1059,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test, Test2>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1115,7 +1115,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_PrimaryConstructor_Works() {
+    public void Inline_PrimaryConstructor() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1142,7 +1142,7 @@ public sealed class UnitTests {
 
 
     [Fact]
-    public void Inline_Finalizer_Works() {
+    public void Inline_Finalizer() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1156,7 +1156,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1178,7 +1178,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_FinalizerMerge_Works() {
+    public void Inline_FinalizerMerge() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1223,7 +1223,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Inline_FinalizerMergePrepend_Works() {
+    public void Inline_FinalizerMergePrepend() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1273,7 +1273,7 @@ public sealed class UnitTests {
     #region multiple bases, seperate inlines
 
     [Fact]
-    public void MultipleBases_Works() {
+    public void MultipleBases() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1290,7 +1290,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test, Test2>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1374,12 +1374,12 @@ public sealed class UnitTests {
             
             namespace MyCode;
 
-            public class N { }
-            public interface IN { }
-            public class A { }
-            public interface IA { }
-            public interface IB { }
-            public interface IC { }
+            public class N;
+            public interface IN;
+            public class A;
+            public interface IA;
+            public interface IB;
+            public interface IC;
 
             [InlineBase]
             public sealed class Test : A, IA, IB {
@@ -1392,7 +1392,7 @@ public sealed class UnitTests {
             }
             
             [Inline<Test, Test2>]
-            public sealed partial class Derived : N, IN { }
+            public sealed partial class Derived : N, IN;
 
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1429,7 +1429,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test, Test2>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1467,7 +1467,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test, Test2>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1511,7 +1511,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test, Test2>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1551,7 +1551,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test, Test2>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1597,7 +1597,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test, Test2>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1622,7 +1622,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void MultipleInlines_Works() {
+    public void MultipleInlines() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1639,10 +1639,10 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived1 { }
+            public sealed partial class Derived1;
 
             [Inline<Test2>]
-            public sealed partial class Derived2 { }
+            public sealed partial class Derived2;
             
             """;
         string[] sourceTexts = GenerateSourceText(input, out _, out _);
@@ -1674,7 +1674,7 @@ public sealed class UnitTests {
     #endregion
 
 
-    #region others (nested namespace and nested usings, InlineBase missing, NoInlineAttribute, IgnoreInheritenceAndImplements, Generic, struct)
+    #region others (nested namespace and nested usings, InlineBase missing, NoInlineAttribute, MapBaseType, IgnoreInheritenceAndImplements, Generic, struct)
 
     [Fact]
     public void NestedNamespaceAndNestedUsings() {
@@ -1687,10 +1687,10 @@ public sealed class UnitTests {
                     using nested.A;
 
                     [Inline<Test>]
-                    public sealed partial class Derived { }
+                    public sealed partial class Derived;
             
                     [InlineBase]
-                    public sealed class Base { }
+                    public sealed class Base;
                 }
             }
 
@@ -1724,7 +1724,7 @@ public sealed class UnitTests {
             namespace MyCode;
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             public sealed class Test {
                 public int myField = 5;
@@ -1744,7 +1744,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void NoInline_DoesNotInline() {
+    public void NoInline() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1761,7 +1761,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1779,20 +1779,57 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void IgnoreInheritenceAndImplements_IgnoresInheritenceAndImplements() {
+    public void MapBaseType() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase(MapBaseType = true)]
+            public struct Test {
+                public Test A => null!;
+            }
+
+            [InlineBase(MapBaseType = false]
+            public struct Test2 {
+                public Test2 B => null!;
+            }
+            
+            [Inline<Test, Test2>]
+            public partial struct Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public partial struct Derived {
+                public Derived A => null!;
+
+                public Test2 B => null!;
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void IgnoreInheritenceAndImplements() {
         const string input = """
             using InlineCompositionAttributes;
             
             namespace MyCode;
 
             [InlineBase(IgnoreInheritenceAndImplements = true)]
-            public sealed class Test : ITest { }
+            public sealed class Test : ITest;
 
             [InlineBase]
-            public sealed class Test2 : ITest2 { }
+            public sealed class Test2 : ITest2;
             
             [Inline<Test, Test2>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1808,7 +1845,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void Generic_Works() {
+    public void Generic() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1829,7 +1866,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test<string>>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1865,7 +1902,52 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void ClassWithStruct_Works() {
+    public void MapBaseTypeGeneric() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+
+            [InlineBase(MapBaseType = true)]
+            public struct Test<T> {
+                public Test<T> A(Test<T> t, T t2) => null!;
+            }
+
+            [InlineBase(MapBaseType = false]
+            public struct Test2<T> {
+                public Test<T> B(Test<T> t, T t2) => null!;
+            }
+            
+            [Inline<Test<string>, Test2<string>>]
+            public partial struct Derived;
+            
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public partial struct Derived {
+                public Derived A(Derived t, string t2) {
+                    {
+                        return null!;
+                    }
+                }
+
+                public Test<string> B(Test<string> t, string t2) {
+                    {
+                        return null!;
+                    }
+                }
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
+
+    [Fact]
+    public void ClassWithStruct() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1877,7 +1959,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public sealed partial class Derived { }
+            public sealed partial class Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1895,7 +1977,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void StructWithStruct_Works() {
+    public void StructWithStruct() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1907,7 +1989,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public partial struct Derived { }
+            public partial struct Derived;
             
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1925,7 +2007,7 @@ public sealed class UnitTests {
     }
 
     [Fact]
-    public void StructWithClass_Works() {
+    public void StructWithClass() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -1937,7 +2019,7 @@ public sealed class UnitTests {
             }
 
             [Inline<Test>]
-            public partial struct Derived { }
+            public partial struct Derived;
 
             """;
         string sourceText = GenerateSourceText(input, out _, out _)[^1];
@@ -1958,7 +2040,7 @@ public sealed class UnitTests {
 
 
     [Fact]
-    public void EverythingCombined_Works() {
+    public void EverythingCombined() {
         const string input = """
             using InlineCompositionAttributes;
             
@@ -2018,7 +2100,7 @@ public sealed class UnitTests {
             }
 
             [Inline<TestGeneric<string>, Test2>]
-            public partial struct Derived { }
+            public partial struct Derived;
             
             """;
 

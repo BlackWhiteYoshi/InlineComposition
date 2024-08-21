@@ -20,6 +20,12 @@ public static partial class Attributes {
         [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
         internal sealed class InlineBaseAttribute : Attribute {
             /// <summary>
+            /// <para>If set all occurrences of the type of the inlineBase class/struct get replaced with the type of the inlining class/struct.</para>
+            /// <para>e.g. if "Example" inlines "Test" with this option enabled, all occurrences of type "Test" inside class/struct "Test" will be mapped to "Example".</para>
+            /// </summary>
+            public bool MapBaseType { get; init; }
+
+            /// <summary>
             /// If set the generator ignores the inherited class and implemented interfaces of this type.
             /// </summary>
             public bool IgnoreInheritenceAndImplements { get; init; }
