@@ -115,6 +115,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         List<string> attributeList = [];
         List<string> primaryArgumentsList = [];
         List<string> baseList = [];
+        Dictionary<string, string> typeList = [];
         Dictionary<string, string> fieldList = [];
         Dictionary<string, string> propertyList = [];
         Dictionary<string, string> eventList = [];
@@ -351,6 +352,15 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                     continue;
                 
                 switch (node) {
+                    case TypeDeclarationSyntax typeDeclarationSyntax: {
+                        string name = typeDeclarationSyntax.Identifier.ValueText;
+
+                        if (!typeList.ContainsKey(name)) {
+                            string source = ReplaceGeneric(typeDeclarationSyntax.ToFullString(), genericParameters, baseClassNode.genericArguments);
+                            typeList.Add(name, source);
+                        }
+                        break;
+                    }
                     case FieldDeclarationSyntax fieldDeclarationSyntax: {
                         if (fieldDeclarationSyntax.Declaration.Variables.Count > 1)
                             throw new ArgumentException("multiple variable declaration is not supported.");
@@ -538,6 +548,10 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         builder.Append('\n');
 
         // body
+        foreach (KeyValuePair<string, string> type in typeList) {
+            builder.Append(type.Value);
+            builder.Append('\n');
+        }
         foreach (KeyValuePair<string, string> pair in fieldList) {
             builder.Append(pair.Value);
             builder.Append('\n');

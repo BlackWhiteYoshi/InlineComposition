@@ -53,7 +53,54 @@ public sealed class UnitTests {
     }
 
 
-    #region field, property, event
+    #region type, field, property, event
+
+    [Fact]
+    public void Inline_Type() {
+        const string input = """
+            using InlineCompositionAttributes;
+            
+            namespace MyCode;
+            
+            [InlineBase]
+            public sealed class Test {
+                public struct NestedStruct;
+
+                /// <summary>
+                /// asdf
+                /// </summary>
+                [SomeAttribute]
+                private sealed record class Nested {
+                    public int Number => 1;
+                }
+            }
+
+            [Inline<Test>]
+            public sealed partial class Derived;
+
+            """;
+        string sourceText = GenerateSourceText(input, out _, out _)[^1];
+
+        const string expected = $$"""
+            {{GENERATED_SOURCE_HEAD}}
+
+            public sealed partial class Derived {
+                public struct NestedStruct;
+
+
+                /// <summary>
+                /// asdf
+                /// </summary>
+                [SomeAttribute]
+                private sealed record class Nested {
+                    public int Number => 1;
+                }
+
+            }
+            
+            """;
+        Assert.Equal(expected, sourceText);
+    }
 
     [Fact]
     public void Inline_Field() {

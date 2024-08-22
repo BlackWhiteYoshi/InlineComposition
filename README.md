@@ -71,7 +71,9 @@ public partial class Derived : IBaseA, IBaseB { ... }
 
 Members with the same identifier get merged to a single Member.
 Make sure merged members have the same signature.
-Method-bodies are merged together that every method is executed one after another.
+Method-bodies are merged together that every method is executed one after another.  
+Merging of nested types is not supported.
+If a conflict of nested types happens, the first one is taken and the others are ignored.
 
 
 ```csharp
