@@ -12,8 +12,7 @@ internal static class NodeExtensions {
     /// <returns>The first node of type T, otherwise null.</returns>
     internal static T? GetParent<T>(this SyntaxNode syntaxNode) where T : SyntaxNode {
         SyntaxNode? currentNode = syntaxNode.Parent;
-        while (currentNode != null)
-        {
+        while (currentNode != null) {
             if (currentNode is T t)
                 return t;
 

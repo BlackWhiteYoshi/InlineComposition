@@ -350,7 +350,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             foreach (MemberDeclarationSyntax node in classType.Members) {
                 if (node.GetAttribute("NoInline", "NoInlineAttribute") != null)
                     continue;
-                
+
                 switch (node) {
                     case TypeDeclarationSyntax typeDeclarationSyntax: {
                         string name = typeDeclarationSyntax.Identifier.ValueText;
@@ -599,7 +599,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         foreach (string parameter in parameters)
             length += parameter.Length;
         length += parameters.Length;
-        
+
         Span<char> result = (length < 1024) switch {
             true => stackalloc char[length],
             false => new char[length]
@@ -624,7 +624,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
     private static void AddMethodHead(BaseMethodDeclarationSyntax method, List<string> list, string name, string? modifiers, string[] genericParameters, string[] genericArguments) {
         list.Add(method.AttributeLists.ToFullString());
-        
+
         list.Add("    ");
         if (modifiers != null) {
             if (modifiers != string.Empty) {
@@ -650,7 +650,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             list.Add(".");
         }
         list.Add(name);
-        
+
         if (typeParameterList != null)
             list.Add(ReplaceGeneric(typeParameterList.ToString(), genericParameters, genericArguments));
         list.Add(ReplaceGeneric(method.ParameterList.ToString(), genericParameters, genericArguments));
@@ -686,7 +686,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
     private static string? GetMethodBody(BaseMethodDeclarationSyntax method) {
         if (method.Body != null)
             return method.Body.Statements.ToFullString();
-        
+
         if (method.ExpressionBody != null)
             if (method is MethodDeclarationSyntax normalMethod && normalMethod.ReturnType.ToString() != "void"
                 || method is OperatorDeclarationSyntax operatorMethod && operatorMethod.ReturnType.ToString() != "void")
@@ -699,7 +699,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                                     {method.ExpressionBody.Expression.ToFullString()};
 
                         """;
-        
+
         return null;
     }
 

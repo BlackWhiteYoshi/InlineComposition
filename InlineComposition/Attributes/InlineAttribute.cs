@@ -8,9 +8,9 @@ public static partial class Attributes {
 
 
         #if !INLINECOMPOSITION_EXCLUDE_ATTRIBUTES
-        
+
         using System;
-    
+
         namespace InlineCompositionAttributes;
 
         /// <summary>

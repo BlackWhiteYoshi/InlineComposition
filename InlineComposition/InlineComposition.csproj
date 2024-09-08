@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    
+
     <Title>InlineComposition</Title>
     <Description>A source generator that merges the content of other classes into one class. A simple workaround for struct inheritance or multiple inheritance.</Description>
     <Authors>BlackWhiteYoshi</Authors>
@@ -24,20 +24,20 @@
 
     <PackageLicenseFile>LICENSE</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    
+
     <IsRoslynComponent>true</IsRoslynComponent>
     <IncludeBuildOutput>false</IncludeBuildOutput>
     <DevelopmentDependency>true</DevelopmentDependency>
     <EnforceExtendedAnalyzerRules>true</EnforceExtendedAnalyzerRules>
     <SuppressDependenciesWhenPacking>true</SuppressDependenciesWhenPacking>
-    
+
     <Version>1.4.0</Version>
   </PropertyGroup>
-  
+
   <PropertyGroup Condition="'$(Configuration)'=='Release'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
-  
+
   <ItemGroup>
     <None Include="..\PACKAGE.md" Pack="True" PackagePath="/" />
     <None Include="..\ICON.png" Pack="True" PackagePath="/" />
@@ -54,7 +54,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.ObjectPool" Version="8.0.8" PrivateAssets="all" GeneratePathProperty="true" />
   </ItemGroup>
-  
+
   <PropertyGroup>
     <GetTargetPathDependsOn>$(GetTargetPathDependsOn);GetDependencyTargetPaths</GetTargetPathDependsOn>
   </PropertyGroup>
