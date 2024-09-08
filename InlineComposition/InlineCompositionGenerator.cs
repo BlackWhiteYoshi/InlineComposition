@@ -466,13 +466,8 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
         // usingStatements
         if (usingStatementList.Count > 0) {
-            foreach (string usingStatement in usingStatementList.Distinct()) {
-                builder.Append("using ");
-                builder.Append(usingStatement);
-                builder.Append(';');
-                builder.Append('\n');
-            }
-
+            foreach (string usingStatement in usingStatementList.Distinct())
+                builder.AppendInterpolation($"using {usingStatement};\n");
             builder.Append('\n');
         }
 
@@ -484,128 +479,94 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 builder.Append("namespace ");
 
                 int startIndex = builder.Length;
-                AppendNamespace(namespaceSyntax, builder);
+                builder.AppendNamespace(namespaceSyntax);
                 classNamespace = builder.ToString(startIndex, builder.Length - startIndex);
 
-                builder.Append(';');
-                builder.Append('\n');
-                builder.Append('\n');
-
-
-                static void AppendNamespace(BaseNamespaceDeclarationSyntax namespaceSyntax, StringBuilder builder) {
-                    BaseNamespaceDeclarationSyntax? parentNamespace = namespaceSyntax.GetParent<BaseNamespaceDeclarationSyntax>();
-                    if (parentNamespace != null) {
-                        AppendNamespace(parentNamespace, builder);
-                        builder.Append('.');
-                    }
-
-                    builder.Append(namespaceSyntax.Name.ToString());
-                }
+                builder.Append(";\n\n");
             }
             else
                 classNamespace = string.Empty;
         }
 
         // attributes
-        foreach (string attribute in attributeList) {
-            builder.Append(attribute);
-            builder.Append('\n');
-        }
+        foreach (string attribute in attributeList)
+            builder.AppendInterpolation($"{attribute}\n");
 
         // class/struct declaration
-        foreach (SyntaxToken token in inlineClass.Modifiers) {
-            builder.Append(token.ValueText);
-            builder.Append(' ');
-        }
-        builder.Append(inlineClass.Keyword.ValueText);
-        builder.Append(' ');
-        if (inlineClass is RecordDeclarationSyntax recordDeclarationSyntax && recordDeclarationSyntax.ClassOrStructKeyword.ValueText is string { Length: >0 } classStructKeyword) {
-            builder.Append(classStructKeyword);
-            builder.Append(' ');
-        }
-        builder.Append(inlineClassName);
-        builder.Append(inlineClass.TypeParameterList?.ToString());
+        foreach (SyntaxToken token in inlineClass.Modifiers)
+            builder.AppendInterpolation($"{token.ValueText} ");
+
+        builder.AppendInterpolation($"{inlineClass.Keyword.ValueText} ");
+
+        if (inlineClass is RecordDeclarationSyntax recordDeclarationSyntax && recordDeclarationSyntax.ClassOrStructKeyword.ValueText is string { Length: > 0 } classStructKeyword)
+            builder.AppendInterpolation($"{classStructKeyword} ");
+
+        builder.AppendInterpolation($"{inlineClassName}{inlineClass.TypeParameterList}");
+
         if (primaryArgumentsList.Count > 0) {
             builder.Append('(');
-            foreach (string argument in primaryArgumentsList.Distinct()) {
-                builder.Append(argument);
-                builder.Append(',');
-                builder.Append(' ');
-            }
+
+            foreach (string argument in primaryArgumentsList.Distinct())
+                builder.AppendInterpolation($"{argument}, ");
             builder.Length -= 2;
+
             builder.Append(')');
         }
+
         if (baseList.Count > 0) {
             builder.Append(" :");
-            foreach (string baseIdentifier in baseList.Distinct()) {
-                builder.Append(' ');
-                builder.Append(baseIdentifier);
-                builder.Append(',');
-            }
+            foreach (string baseIdentifier in baseList.Distinct())
+                builder.AppendInterpolation($" {baseIdentifier},");
             builder.Length--;
         }
-        builder.Append(" {");
-        builder.Append('\n');
+
+        builder.Append(" {\n");
 
         // body
-        foreach (KeyValuePair<string, string> type in typeList) {
-            builder.Append(type.Value);
-            builder.Append('\n');
-        }
-        foreach (KeyValuePair<string, string> pair in fieldList) {
-            builder.Append(pair.Value);
-            builder.Append('\n');
-        }
-        foreach (KeyValuePair<string, string> pair in propertyList) {
-            builder.Append(pair.Value);
-            builder.Append('\n');
-        }
-        foreach (KeyValuePair<string, string> pair in eventList) {
-            builder.Append(pair.Value);
-            builder.Append('\n');
-        }
+        foreach (KeyValuePair<string, string> type in typeList)
+            builder.AppendInterpolation($"{type.Value}\n");
+        foreach (KeyValuePair<string, string> pair in fieldList)
+            builder.AppendInterpolation($"{pair.Value}\n");
+        foreach (KeyValuePair<string, string> pair in propertyList)
+            builder.AppendInterpolation($"{pair.Value}\n");
+        foreach (KeyValuePair<string, string> pair in eventList)
+            builder.AppendInterpolation($"{pair.Value}\n");
         foreach (KeyValuePair<string, MethodEntry> pair in methodList) {
             foreach (string chunk in pair.Value.headList)
                 builder.Append(chunk);
+
             if (pair.Value.blockList.Count > 0 || pair.Value.lastBlock != null) {
                 // open method
                 builder.Append("{\n");
-                foreach (string block in pair.Value.blockList) {
-                    builder.Append("        {");
-                    builder.Append('\n');
-                    builder.Append(block);
-                    builder.Append("        }");
-                    builder.Append('\n');
-                }
-                if (pair.Value.lastBlock != null) {
-                    builder.Append("        {");
-                    builder.Append('\n');
-                    builder.Append(pair.Value.lastBlock);
-                    builder.Append("        }");
-                    builder.Append('\n');
-                }
+
+                foreach (string block in pair.Value.blockList)
+                    builder.AppendInterpolation($"        {{\n{block}        }}\n");
+                if (pair.Value.lastBlock != null)
+                    builder.AppendInterpolation($"        {{\n{pair.Value.lastBlock}        }}\n");
+
                 // close method
                 builder.Append("    }");
             }
-            else {
-                builder.Length--; // remove a space
-                builder.Append(';');
-            }
+            else
+                // replace space with ';'
+                builder[^1] = ';';
 
-            builder.Append('\n');
-            builder.Append('\n');
+            builder.Append("\n\n");
         }
 
         // close class/struct
-        builder.Append('}');
-        builder.Append('\n');
+        builder.Append("}\n");
+
+        string sourceCode = builder.ToString();
 
 
         string hintName = classNamespace switch {
             string { Length: > 0 } => $"{classNamespace}.{inlineClassName}.g.cs",
             _ => $"{inlineClassName}.g.cs"
         };
-        context.AddSource(hintName, builder.ToString());
+
+        context.AddSource(hintName, sourceCode);
+
 
         stringBuilderPool.Return(builder);
 
