@@ -33,7 +33,7 @@ public sealed class UnitTests {
             PortableExecutableReference metadataReference = MetadataReference.CreateFromFile(typeof(Binder).GetTypeInfo().Assembly.Location);
             CSharpCompilationOptions compilationOptions = new(OutputKind.ConsoleApplication);
 
-            return CSharpCompilation.Create("compilation", new[] { syntaxTree }, new[] { metadataReference }, compilationOptions);
+            return CSharpCompilation.Create("compilation", [syntaxTree], [metadataReference], compilationOptions);
         }
     }
 

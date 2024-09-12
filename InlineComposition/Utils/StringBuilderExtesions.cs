@@ -21,6 +21,12 @@ public static class StringBuilderExtesions {
 
         return builder;
     }
+    /// <summary>
+    /// Creates a type to map method <see cref="StringBuilderInterpolationHandler.AppendFormatted(StringBuilderInterpolationHandler.INamespace)"/> to <see cref="AppendNamespace"/>.
+    /// </summary>
+    /// <param name="service"></param>
+    /// <returns></returns>
+    public static StringBuilderInterpolationHandler.INamespace AsNamespace(this BaseNamespaceDeclarationSyntax namespaceSyntax) => Unsafe.As<StringBuilderInterpolationHandler.INamespace>(namespaceSyntax);
 
     /// <summary>
     /// The same as <see cref="StringBuilder.Append(string)"/>, but only for interpolated strings: $"..."<br />
@@ -40,5 +46,9 @@ public static class StringBuilderExtesions {
         public void AppendLiteral(string str) => builder.Append(str);
 
         public void AppendFormatted<T>(T item) => builder.Append(item);
+
+
+        public interface INamespace;
+        public void AppendFormatted(INamespace @namespace) => builder.AppendNamespace(Unsafe.As<BaseNamespaceDeclarationSyntax>(@namespace));
     }
 }
