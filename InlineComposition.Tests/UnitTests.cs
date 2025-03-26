@@ -2,7 +2,6 @@
 using Microsoft.CodeAnalysis.CSharp;
 using System.Collections.Immutable;
 using System.Reflection;
-using Xunit;
 
 namespace InlineComposition.Tests;
 
@@ -25,7 +24,7 @@ public sealed class UnitTests {
 
         GeneratorDriverRunResult runResult = driver.GetRunResult();
         GeneratorRunResult generatorResult = runResult.Results[0];
-        return generatorResult.GeneratedSources.Select((GeneratedSourceResult generatedSource) => generatedSource.SourceText.ToString()).ToArray();
+        return [.. generatorResult.GeneratedSources.Select((GeneratedSourceResult generatedSource) => generatedSource.SourceText.ToString())];
 
 
         static CSharpCompilation CreateCompilation(string source) {
@@ -39,24 +38,24 @@ public sealed class UnitTests {
 
 
 
-    [Fact]
-    public void AssemblyNameAndVersionMatch() {
+    [Test]
+    public async ValueTask AssemblyNameAndVersionMatch() {
         string assemblyName = typeof(InlineCompositionGenerator).Assembly.GetName().Name!;
-        string assemblyVersion = typeof(InlineCompositionGenerator).Assembly.GetName().Version!.ToString()[..^2];
+        string assemblyVersion = typeof(InlineCompositionGenerator).Assembly.GetName().Version!.ToString(3);
 
         FieldInfo[] fields = typeof(Attributes).GetFields(BindingFlags.NonPublic | BindingFlags.Static);
         string name = (string)fields[0].GetValue(null)!;
         string version = (string)fields[1].GetValue(null)!;
 
-        Assert.Equal(assemblyName, name);
-        Assert.Equal(assemblyVersion, version);
+        await Assert.That(name).IsEqualTo(assemblyName);
+        await Assert.That(version).IsEqualTo(assemblyVersion);
     }
 
 
     #region type, field, property, event
 
-    [Fact]
-    public void Inline_Type() {
+    [Test]
+    public async ValueTask Inline_TypeAsync() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -99,11 +98,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_Field() {
+    [Test]
+    public async ValueTask Inline_Field() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -134,11 +133,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_Property() {
+    [Test]
+    public async ValueTask Inline_Property() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -164,11 +163,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_Event() {
+    [Test]
+    public async ValueTask Inline_Event() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -194,7 +193,7 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
     #endregion
@@ -202,8 +201,8 @@ public sealed class UnitTests {
 
     #region head - Comments and BaseClasses
 
-    [Fact]
-    public void Inline_AttributeAndComment() {
+    [Test]
+    public async ValueTask Inline_AttributeAndComment() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -237,11 +236,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_BaseClassAndInterfaces() {
+    [Test]
+    public async ValueTask Inline_BaseClassAndInterfaces() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -263,11 +262,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_BaseClassWithPrimaryConstructor() {
+    [Test]
+    public async ValueTask Inline_BaseClassWithPrimaryConstructor() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -289,7 +288,7 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
     #endregion
@@ -297,8 +296,8 @@ public sealed class UnitTests {
 
     #region Method, Constructor, Finalizer
 
-    [Fact]
-    public void Inline_Method() {
+    [Test]
+    public async ValueTask Inline_Method() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -354,11 +353,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_Static_Method() {
+    [Test]
+    public async ValueTask Inline_Static_Method() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -390,11 +389,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_Operator() {
+    [Test]
+    public async ValueTask Inline_Operator() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -426,11 +425,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_Extern_Method() {
+    [Test]
+    public async ValueTask Inline_Extern_Method() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -458,11 +457,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_MethodMerge() {
+    [Test]
+    public async ValueTask Inline_MethodMerge() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -535,11 +534,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_MethodOperatorMerge() {
+    [Test]
+    public async ValueTask Inline_MethodOperatorMerge() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -576,11 +575,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await   Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_MethodMergePrepend() {
+    [Test]
+    public async ValueTask Inline_MethodMergePrepend() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -621,11 +620,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_Method_ParameterAnyOrder() {
+    [Test]
+    public async ValueTask Inline_Method_ParameterAnyOrder() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -766,11 +765,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_MethodOverload_DoesNotMerge() {
+    [Test]
+    public async ValueTask Inline_MethodOverload_DoesNotMerge() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -815,12 +814,12 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
 
-    [Fact]
-    public void Inline_Constructor() {
+    [Test]
+    public async ValueTask Inline_Constructor() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -852,11 +851,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_ConstructorWithThisCall() {
+    [Test]
+    public async ValueTask Inline_ConstructorWithThisCall() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -898,11 +897,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_ConstructorWithBaseCall() {
+    [Test]
+    public async ValueTask Inline_ConstructorWithBaseCall() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -944,11 +943,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_ConstructorMerge() {
+    [Test]
+    public async ValueTask Inline_ConstructorMerge() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -989,11 +988,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_ConstructorMergePrepend() {
+    [Test]
+    public async ValueTask Inline_ConstructorMergePrepend() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1035,11 +1034,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_Constructor_ParameterOtherOrder() {
+    [Test]
+    public async ValueTask Inline_Constructor_ParameterOtherOrder() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1081,11 +1080,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_ConstructorOverload_DoesNotMerge() {
+    [Test]
+    public async ValueTask Inline_ConstructorOverload_DoesNotMerge() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1130,11 +1129,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_StaticConstructor_IsIgnored() {
+    [Test]
+    public async ValueTask Inline_StaticConstructor_IsIgnored() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1158,11 +1157,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_PrimaryConstructor() {
+    [Test]
+    public async ValueTask Inline_PrimaryConstructor() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1184,12 +1183,12 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
 
-    [Fact]
-    public void Inline_Finalizer() {
+    [Test]
+    public async ValueTask Inline_Finalizer() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1221,11 +1220,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_FinalizerMerge() {
+    [Test]
+    public async ValueTask Inline_FinalizerMerge() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1266,11 +1265,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_FinalizerMergePrepend() {
+    [Test]
+    public async ValueTask Inline_FinalizerMergePrepend() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1311,7 +1310,7 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
     #endregion
@@ -1319,8 +1318,8 @@ public sealed class UnitTests {
 
     #region multiple bases, seperate inlines
 
-    [Fact]
-    public void MultipleBases() {
+    [Test]
+    public async ValueTask MultipleBases() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1353,11 +1352,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MultipleBases_PrimaryConstructor_GetMerged() {
+    [Test]
+    public async ValueTask MultipleBases_PrimaryConstructor_GetMerged() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1382,11 +1381,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MultipleBases_PrimaryConstructor_DifferentNamesGetNotMerged() {
+    [Test]
+    public async ValueTask MultipleBases_PrimaryConstructor_DifferentNamesGetNotMerged() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1411,11 +1410,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MultipleBases_ClassesAndInterfacesGetMerged() {
+    [Test]
+    public async ValueTask MultipleBases_ClassesAndInterfacesGetMerged() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1455,11 +1454,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MultipleBases_ConflictsNonMethods_GetMerged() {
+    [Test]
+    public async ValueTask MultipleBases_ConflictsNonMethods_GetMerged() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1489,11 +1488,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MultipleBases_ConflictsMethods_GetMerged() {
+    [Test]
+    public async ValueTask MultipleBases_ConflictsMethods_GetMerged() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1535,11 +1534,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MultipleBases_ConflictsExternMethods_GetMerged() {
+    [Test]
+    public async ValueTask MultipleBases_ConflictsExternMethods_GetMerged() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1573,11 +1572,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MultipleBases_ConflictsConstructors_GetMerged() {
+    [Test]
+    public async ValueTask MultipleBases_ConflictsConstructors_GetMerged() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1619,11 +1618,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MultipleBases_ConflictsFinalizer_GetMerged() {
+    [Test]
+    public async ValueTask MultipleBases_ConflictsFinalizer_GetMerged() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1665,11 +1664,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MultipleInlines() {
+    [Test]
+    public async ValueTask MultipleInlines() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1704,7 +1703,7 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected1, sourceText1);
+        await Assert.That(sourceText1).IsEqualTo(expected1);
 
         const string expected2 = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -1715,7 +1714,7 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected2, sourceText2);
+        await Assert.That(sourceText2).IsEqualTo(expected2);
     }
 
     #endregion
@@ -1723,8 +1722,8 @@ public sealed class UnitTests {
 
     #region InlineBase Properties
 
-    [Fact]
-    public void MapBaseType() {
+    [Test]
+    public async ValueTask MapBaseType() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1757,11 +1756,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void IgnoreInheritenceAndImplements() {
+    [Test]
+    public async ValueTask IgnoreInheritenceAndImplements() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1786,11 +1785,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void InlineAttributes() {
+    [Test]
+    public async ValueTask InlineAttributes() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1818,7 +1817,7 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
     #endregion
@@ -1826,8 +1825,8 @@ public sealed class UnitTests {
 
     #region Generics
 
-    [Fact]
-    public void Generic() {
+    [Test]
+    public async ValueTask Generic() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1880,11 +1879,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void MapBaseTypeGeneric() {
+    [Test]
+    public async ValueTask MapBaseTypeGeneric() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1925,7 +1924,7 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
     #endregion
@@ -1933,8 +1932,8 @@ public sealed class UnitTests {
 
     #region class, struct, record class, record struct
 
-    [Fact]
-    public void ClassWithClass() {
+    [Test]
+    public async ValueTask ClassWithClass() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1960,11 +1959,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void ClassWithStruct() {
+    [Test]
+    public async ValueTask ClassWithStruct() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -1990,11 +1989,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void ClassWithRecordClass() {
+    [Test]
+    public async ValueTask ClassWithRecordClass() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2020,11 +2019,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void ClassWithRecordStruct() {
+    [Test]
+    public async ValueTask ClassWithRecordStruct() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2050,12 +2049,12 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
 
-    [Fact]
-    public void StructWithClass() {
+    [Test]
+    public async ValueTask StructWithClass() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2081,11 +2080,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void StructWithStruct() {
+    [Test]
+    public async ValueTask StructWithStruct() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2111,11 +2110,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void StructWithRecordClass() {
+    [Test]
+    public async ValueTask StructWithRecordClass() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2141,11 +2140,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void StructWithRecordStruct() {
+    [Test]
+    public async ValueTask StructWithRecordStruct() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2171,12 +2170,12 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
 
-    [Fact]
-    public void RecordClassWithClass() {
+    [Test]
+    public async ValueTask RecordClassWithClass() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2202,11 +2201,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void RecordClassWithStruct() {
+    [Test]
+    public async ValueTask RecordClassWithStruct() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2232,11 +2231,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void RecordClassWithRecordClass() {
+    [Test]
+    public async ValueTask RecordClassWithRecordClass() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2262,11 +2261,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void RecordClassWithRecordStruct() {
+    [Test]
+    public async ValueTask RecordClassWithRecordStruct() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2292,12 +2291,12 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
 
-    [Fact]
-    public void RecordStructWithClass() {
+    [Test]
+    public async ValueTask RecordStructWithClass() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2323,11 +2322,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void RecordStructWithStruct() {
+    [Test]
+    public async ValueTask RecordStructWithStruct() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2353,11 +2352,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void RecordStructWithRecordClass() {
+    [Test]
+    public async ValueTask RecordStructWithRecordClass() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2383,11 +2382,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void RecordStructWithRecordStruct() {
+    [Test]
+    public async ValueTask RecordStructWithRecordStruct() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2413,7 +2412,7 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
     #endregion
@@ -2421,8 +2420,8 @@ public sealed class UnitTests {
 
     #region others (nested namespace and nested usings, InlineBase missing, NoInlineAttribute)
 
-    [Fact]
-    public void NestedNamespaceAndNestedUsings() {
+    [Test]
+    public async ValueTask NestedNamespaceAndNestedUsings() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2458,11 +2457,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void Inline_WithoutInlineBase_DoesNotWork() {
+    [Test]
+    public async ValueTask Inline_WithoutInlineBase_DoesNotWork() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2485,11 +2484,11 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
-    [Fact]
-    public void NoInline() {
+    [Test]
+    public async ValueTask NoInline() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2520,14 +2519,14 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected, sourceText);
+        await Assert.That(sourceText).IsEqualTo(expected);
     }
 
     #endregion
 
 
-    [Fact]
-    public void EverythingCombined() {
+    [Test]
+    public async ValueTask EverythingCombined() {
         const string input = """
             using InlineCompositionAttributes;
 
@@ -2593,8 +2592,8 @@ public sealed class UnitTests {
 
         string[] sourceTexts = GenerateSourceText(input, out Compilation outputCompilation, out ImmutableArray<Diagnostic> diagnostics);
 
-        Assert.True(diagnostics.IsEmpty);
-        Assert.NotNull(outputCompilation);
+        await Assert.That(diagnostics.IsEmpty).IsTrue();
+        await Assert.That(outputCompilation).IsNotNull();
 
 
         (string sourceText1, string sourceText2) = (sourceTexts[^2], sourceTexts[^1]);
@@ -2649,7 +2648,7 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected1, sourceText1);
+        await Assert.That(sourceText1).IsEqualTo(expected1);
 
         const string expected2 = $$"""
             {{GENERATED_SOURCE_HEAD}}
@@ -2690,6 +2689,6 @@ public sealed class UnitTests {
             }
 
             """;
-        Assert.Equal(expected2, sourceText2);
+        await Assert.That(sourceText2).IsEqualTo(expected2);
     }
 }
