@@ -1,4 +1,6 @@
-﻿namespace InlineComposition;
+﻿using AssemblyVersionInfo;
+
+namespace InlineComposition;
 
 public static partial class Attributes {
     public const string NoInlineAttribute = $$"""
@@ -18,7 +20,7 @@ public static partial class Attributes {
         /// <para>Skips/Ignores this member.</para>
         /// </summary>
         [AttributeUsage(AttributeTargets.Field | AttributeTargets.Property | AttributeTargets.Event | AttributeTargets.Method)]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{Assembly.NAME}}", "{{Assembly.VERSION_MAJOR_MINOR_BUILD}}")]
         internal sealed class NoInlineAttribute : Attribute { }
 
         #endif

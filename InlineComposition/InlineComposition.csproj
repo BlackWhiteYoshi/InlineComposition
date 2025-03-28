@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-
+    
     <Title>InlineComposition</Title>
     <Description>A source generator that merges the content of other classes into one class. A simple workaround for struct inheritance or multiple inheritance.</Description>
     <Authors>BlackWhiteYoshi</Authors>
@@ -48,6 +48,7 @@
     <PackageReference Include="Microsoft.CodeAnalysis.CSharp" Version="4.13.0" PrivateAssets="all" />
     <PackageReference Include="Microsoft.CodeAnalysis.Analyzers" Version="3.11.0" PrivateAssets="all" />
     <PackageReference Include="PolySharp" Version="1.15.0" PrivateAssets="all" />
+    <PackageReference Include="AssemblyVersionInfo" Version="1.0.0" PrivateAssets="all" />
   </ItemGroup>
 
 

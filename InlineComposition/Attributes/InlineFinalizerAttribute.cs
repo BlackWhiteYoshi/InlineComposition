@@ -1,4 +1,6 @@
-﻿namespace InlineComposition;
+﻿using AssemblyVersionInfo;
+
+namespace InlineComposition;
 
 public static partial class Attributes {
     public const string InlineFinalizerAttribute = $$"""
@@ -17,7 +19,7 @@ public static partial class Attributes {
         /// The Method under this attribute will be inlined in the finalizer.
         /// </summary>
         [AttributeUsage(AttributeTargets.Method)]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{Assembly.NAME}}", "{{Assembly.VERSION_MAJOR_MINOR_BUILD}}")]
         internal sealed class InlineFinalizerAttribute : Attribute {
             /// <summary>
             /// Indicates whether this method gets inlined before the other finalizers or after.

@@ -1,4 +1,6 @@
-﻿namespace InlineComposition;
+﻿using AssemblyVersionInfo;
+
+namespace InlineComposition;
 
 public static partial class Attributes {
     public const string InlineConstructorAttribute = $$"""
@@ -17,7 +19,7 @@ public static partial class Attributes {
         /// The Method under this attribute will be inlined in the constructor.
         /// </summary>
         [AttributeUsage(AttributeTargets.Method | AttributeTargets.Constructor)]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{Assembly.NAME}}", "{{Assembly.VERSION_MAJOR_MINOR_BUILD}}")]
         internal sealed class InlineConstructorAttribute : Attribute {
             /// <summary>
             /// <para>Modifiers e.g. "public", "protected", "private"</para>

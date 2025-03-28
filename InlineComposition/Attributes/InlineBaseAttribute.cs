@@ -1,4 +1,6 @@
-﻿namespace InlineComposition;
+﻿using AssemblyVersionInfo;
+
+namespace InlineComposition;
 
 public static partial class Attributes {
     public const string InlineBaseAttribute = $$"""
@@ -17,7 +19,7 @@ public static partial class Attributes {
         /// <para>Marks this class/struct as inlineable, so it can be listed in a <see cref="InlineAttribute{T1}"/> Attribute.</para>
         /// </summary>
         [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
-        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{NAME}}", "{{VERSION}}")]
+        [System.CodeDom.Compiler.GeneratedCodeAttribute("{{Assembly.NAME}}", "{{Assembly.VERSION_MAJOR_MINOR_BUILD}}")]
         internal sealed class InlineBaseAttribute : Attribute {
             /// <summary>
             /// <para>If set all occurrences of the type of the inlineBase class/struct get replaced with the type of the inlining class/struct.</para>
