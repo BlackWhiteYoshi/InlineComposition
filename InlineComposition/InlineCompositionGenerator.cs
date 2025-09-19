@@ -2,6 +2,7 @@
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.Extensions.ObjectPool;
 using System.Collections.Immutable;
+using System.Diagnostics;
 using System.Text;
 
 namespace InlineComposition;
@@ -22,93 +23,55 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             context.AddSource("InlineFinalizerAttribute.g.cs", Attributes.InlineFinalizerAttribute);
         });
 
-        // all classes/structs with InlineBase attribute
-        IncrementalValueProvider<ImmutableArray<AttributeSyntax>> inlineBaseListProvider = context.SyntaxProvider.CreateSyntaxProvider(PredicateInlineBase, Identity<AttributeSyntax>).Collect();
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`1");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`2");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`3");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`4");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`5");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`6");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`7");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`8");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`9");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`10");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`11");
+        RegisterProvider(context, "InlineCompositionAttributes.InlineAttribute`12");
 
-        // Inline attributes
-        IncrementalValuesProvider<AttributeSyntax> inlineProvider = context.SyntaxProvider.CreateSyntaxProvider(PredicateInline, Identity<AttributeSyntax>);
+        void RegisterProvider(IncrementalGeneratorInitializationContext context, string inlineAttributeName) {
+            IncrementalValuesProvider<AttributeCollection> inlineProvider = context.SyntaxProvider.ForAttributeWithMetadataName(
+                inlineAttributeName,
+                static (SyntaxNode syntaxNode, CancellationToken _) => syntaxNode is ClassDeclarationSyntax or StructDeclarationSyntax or RecordDeclarationSyntax,
+                static AttributeCollection (GeneratorAttributeSyntaxContext syntaxContext, CancellationToken cancellationToken) => {
+                    Debug.Assert(syntaxContext.Attributes.Length > 0);
+                    Debug.Assert(syntaxContext.Attributes[0].AttributeClass is not null);
 
-        // Inline attributes with baseClasses
-        IncrementalValuesProvider<AttributeCollection> inlineAndInlineBaseListProvider = inlineProvider.Combine(inlineBaseListProvider).Select(CreateAttributeCollection);
+                    TypeDeclarationSyntax inlineClassSyntax = (TypeDeclarationSyntax)syntaxContext.TargetNode;
+                    INamedTypeSymbol inlineClassSymbol = (INamedTypeSymbol)syntaxContext.TargetSymbol;
+                    AttributeData inlineAttribute = syntaxContext.Attributes[0];
 
-        context.RegisterSourceOutput(inlineAndInlineBaseListProvider, Execute);
-    }
+                    TypeDeclarationSyntax?[] baseClassArray = new TypeDeclarationSyntax[inlineAttribute.AttributeClass!.TypeArguments.Length];
+                    AttributeData?[] baseAttributeArray = new AttributeData[inlineAttribute.AttributeClass!.TypeArguments.Length];
+                    for (int i = 0; i < inlineAttribute.AttributeClass!.TypeArguments.Length; i++) {
+                        ITypeSymbol baseClass = inlineAttribute.AttributeClass!.TypeArguments[i];
+                        if (baseClass.DeclaringSyntaxReferences is [SyntaxReference syntaxReference, ..] && syntaxReference.GetSyntax() is TypeDeclarationSyntax baseClassSyntax) {
+                            baseClassArray[i] = baseClassSyntax;
+                            baseAttributeArray[i] = baseClass.GetAttribute("InlineBaseAttribute", ["InlineCompositionAttributes"]);
+                        }
+                    }
 
-
-    #region Predicate
-
-    private static bool PredicateInlineBase(SyntaxNode syntaxNode, CancellationToken _) => PredicateInlineCore(syntaxNode, "InlineBase", "InlineBaseAttribute");
-    private static bool PredicateInline(SyntaxNode syntaxNode, CancellationToken _) => PredicateInlineCore(syntaxNode, "Inline", "InlineAttribute");
-    private static bool PredicateInlineCore(SyntaxNode syntaxNode, string name, string nameAttribute) {
-        if (syntaxNode is not AttributeSyntax attributeSyntax)
-            return false;
-
-        if (attributeSyntax.Parent?.Parent is not (ClassDeclarationSyntax or StructDeclarationSyntax or RecordDeclarationSyntax))
-            return false;
-
-
-        string identifier = attributeSyntax.Name switch {
-            SimpleNameSyntax simpleName => simpleName.Identifier.ValueText,
-            QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
-            _ => string.Empty
-        };
-
-        if (identifier != name && identifier != nameAttribute)
-            return false;
-
-
-        return true;
-    }
-
-    #endregion
-
-
-    #region Transform
-
-    private static T Identity<T>(GeneratorSyntaxContext syntaxContext, CancellationToken _) where T : SyntaxNode => (T)syntaxContext.Node;
-
-    #endregion
-
-
-    #region Combine
-
-    private static AttributeCollection CreateAttributeCollection((AttributeSyntax inlineAttribute, ImmutableArray<AttributeSyntax> baseAttributes) tuple, CancellationToken _) {
-        SeparatedSyntaxList<TypeSyntax> arguments = tuple.inlineAttribute.Name.GetGenericNameSyntax().TypeArgumentList.Arguments;
-        AttributeSyntax?[] resultAttribute = new AttributeSyntax[arguments.Count];
-        TypeDeclarationSyntax?[] resultClass = new TypeDeclarationSyntax[arguments.Count];
-
-        for (int i = 0; i < arguments.Count; i++) {
-            string name = arguments[i] switch {
-                PredefinedTypeSyntax predefinedType => predefinedType.Keyword.ValueText,
-                SimpleNameSyntax simpleNameSyntax => simpleNameSyntax.Identifier.ValueText,
-                QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
-                _ => throw new Exception("No matching SyntaxType for generic argument: cannot identify value of generic argument")
-            };
-
-            // linear search for listed class/struct
-            foreach (AttributeSyntax baseAttribute in tuple.baseAttributes) {
-                TypeDeclarationSyntax baseClass = (TypeDeclarationSyntax)baseAttribute.Parent!.Parent!;
-                if (name == baseClass.Identifier.ValueText) {
-                    resultAttribute[i] = baseAttribute;
-                    resultClass[i] = baseClass;
-                    break;
+                    return new AttributeCollection(inlineClassSyntax, inlineAttribute, baseClassArray, baseAttributeArray);
                 }
-            }
+            );
+
+            context.RegisterSourceOutput(inlineProvider, Execute);
         }
-
-        return new AttributeCollection(tuple.inlineAttribute, resultAttribute, resultClass);
     }
-
-    #endregion
-
 
     private void Execute(SourceProductionContext context, AttributeCollection attributeProvider) {
-        AttributeSyntax inlineAttribute = attributeProvider.inlineAttribute;
-        TypeDeclarationSyntax derivedClass = attributeProvider.inlineClass;
-        ImmutableArray<AttributeSyntax?> baseAttributes = attributeProvider.baseAttributes;
+        TypeDeclarationSyntax inlineClass = attributeProvider.inlineClass;
+        AttributeData inlineAttribute = attributeProvider.inlineAttribute;
         ImmutableArray<TypeDeclarationSyntax?> baseClasses = attributeProvider.baseClasses;
+        ImmutableArray<AttributeData?> baseAttributes = attributeProvider.baseAttributes;
 
-        TypeDeclarationSyntax inlineClass = (TypeDeclarationSyntax)inlineAttribute.Parent!.Parent!;
         string inlineClassName = inlineClass.Identifier.ValueText;
 
         List<string> usingStatementList = [];
@@ -144,7 +107,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             return;
 
         // InlineMethods
-        foreach (MemberDeclarationSyntax node in derivedClass.Members) {
+        foreach (MemberDeclarationSyntax node in inlineClass.Members) {
             AttributeSyntax? inlineMethodAttribute = node.GetAttribute("InlineMethod", "InlineMethodAttribute");
             if (inlineMethodAttribute?.ArgumentList is AttributeArgumentListSyntax attributeArgumentList) {
                 foreach (AttributeArgumentSyntax attributeArgument in attributeArgumentList.Arguments)
@@ -208,70 +171,39 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         if (context.CancellationToken.IsCancellationRequested)
             return;
 
-        BaseClassNode[] baseClassNodes;
-        {
-            SeparatedSyntaxList<TypeSyntax> arguments = inlineAttribute.Name.GetGenericNameSyntax().TypeArgumentList.Arguments;
-            baseClassNodes = new BaseClassNode[arguments.Count];
-            for (int i = 0; i < arguments.Count; i++) {
-                baseClassNodes[i] = new();
+        BaseClassNode[] baseClassNodes = new BaseClassNode[baseClasses.Length];
+        for (int i = 0; i < baseClassNodes.Length; i++) {
+            if (baseClasses[i] is not TypeDeclarationSyntax baseClass)
+                continue;
 
-                string name = arguments[i] switch {
-                    PredefinedTypeSyntax predefinedType => predefinedType.Keyword.ValueText,
-                    SimpleNameSyntax simpleNameSyntax => simpleNameSyntax.Identifier.ValueText,
-                    QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
-                    _ => throw new Exception("No matching SyntaxType for generic argument: cannot identify value of generic argument")
-                };
-
-                TypeDeclarationSyntax? baseClass = baseClasses[i];
-                if (name == baseClass?.Identifier.ValueText) {
-                    baseClassNodes[i].baseClass = baseClass;
-
-                    AttributeSyntax attribute = baseAttributes[i]!;
-                    if (attribute.ArgumentList != null)
-                        foreach (AttributeArgumentSyntax attributeArgument in attribute.ArgumentList.Arguments) {
-                            // check for MapBaseType
-                            if (attributeArgument.NameEquals?.Name.Identifier.ValueText == "MapBaseType")
-                                if (attributeArgument.Expression is LiteralExpressionSyntax literalExpression)
-                                    baseClassNodes[i].mapBaseType = (bool)literalExpression.Token.Value!;
-
-                            // check for IgnoreInheritenceAndImplements
-                            if (attributeArgument.NameEquals?.Name.Identifier.ValueText == "IgnoreInheritenceAndImplements")
-                                if (attributeArgument.Expression is LiteralExpressionSyntax literalExpression)
-                                    baseClassNodes[i].ignoreInheritenceAndImplements = (bool)literalExpression.Token.Value!;
-
-                            // check for InlineAttributes
-                            if (attributeArgument.NameEquals?.Name.Identifier.ValueText == "InlineAttributes")
-                                if (attributeArgument.Expression is LiteralExpressionSyntax literalExpression)
-                                    baseClassNodes[i].inlineAttributes = (bool)literalExpression.Token.Value!;
-                        }
-
-
-                    // extract generic arguments (prepend mapping to baseType)
-                    if (arguments[i] is GenericNameSyntax genericNameSyntax) {
-                        SeparatedSyntaxList<TypeSyntax> genericArguments = genericNameSyntax.TypeArgumentList.Arguments;
-                        int offset;
-                        if (baseClassNodes[i].mapBaseType) {
-                            offset = 1;
-                            baseClassNodes[i].genericArguments = new string[genericArguments.Count + 1];
-                            baseClassNodes[i].genericArguments[0] = $"{derivedClass.Identifier.ValueText}{derivedClass.TypeParameterList?.ToString()}";
-                        }
-                        else {
-                            offset = 0;
-                            baseClassNodes[i].genericArguments = new string[genericArguments.Count];
-                        }
-
-                        for (int j = 0; j < genericArguments.Count; j++)
-                            baseClassNodes[i].genericArguments[j + offset] = genericArguments[j] switch {
-                                PredefinedTypeSyntax predefinedType => predefinedType.Keyword.ValueText,
-                                SimpleNameSyntax simpleNameSyntax => simpleNameSyntax.Identifier.ValueText,
-                                QualifiedNameSyntax qualifiedName => qualifiedName.Right.Identifier.ValueText,
-                                _ => throw new Exception("No matching SyntaxType for generic argument: cannot identify value of generic argument")
-                            };
-                    }
-                    else if (baseClassNodes[i].mapBaseType)
-                        baseClassNodes[i].genericArguments = [$"{derivedClass.Identifier.ValueText}{derivedClass.TypeParameterList?.ToString()}"];
-                }
+            baseClassNodes[i].baseClass = baseClass;
+            if (baseAttributes[i] is AttributeData attribute && attribute.NamedArguments.Length > 0) {
+                if (attribute.NamedArguments.GetArgument<bool?>("MapBaseType") is bool mapBaseType)
+                    baseClassNodes[i].mapBaseType = mapBaseType;
+                if (attribute.NamedArguments.GetArgument<bool?>("IgnoreInheritenceAndImplements") is bool ignoreInheritenceAndImplements)
+                    baseClassNodes[i].ignoreInheritenceAndImplements = ignoreInheritenceAndImplements;
+                if (attribute.NamedArguments.GetArgument<bool?>("InlineAttributes") is bool inlineAttributes)
+                    baseClassNodes[i].inlineAttributes = inlineAttributes;
             }
+
+            // extract generic arguments (prepend mapping to baseType)
+            if (inlineAttribute.AttributeClass!.TypeArguments[i] is INamedTypeSymbol { TypeArguments: ImmutableArray<ITypeSymbol> { Length: > 0 } typeArguments }) {
+                int offset;
+                if (baseClassNodes[i].mapBaseType) {
+                    offset = 1;
+                    baseClassNodes[i].genericArguments = new string[typeArguments.Length + 1];
+                    baseClassNodes[i].genericArguments[0] = $"{inlineClass.Identifier.ValueText}{inlineClass.TypeParameterList?.ToString()}";
+                }
+                else {
+                    offset = 0;
+                    baseClassNodes[i].genericArguments = new string[typeArguments.Length];
+                }
+
+                for (int j = 0; j < typeArguments.Length; j++)
+                    baseClassNodes[i].genericArguments[j + offset] = (typeArguments[j] as INamedTypeSymbol)?.Name ?? string.Empty;
+            }
+            else if (baseClassNodes[i].mapBaseType)
+                baseClassNodes[i].genericArguments = [$"{inlineClass.Identifier.ValueText}{inlineClass.TypeParameterList?.ToString()}"];
         }
 
         if (context.CancellationToken.IsCancellationRequested)
@@ -581,8 +513,6 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
     /// <param name="functionName"></param>
     /// <param name="parameterList"></param>
     /// <returns></returns>
-    /// <exception cref="NotSupportedException">function pointers are not supported</exception>
-    /// <exception cref="Exception">When there is a unexpected syntax node. Should never happen.</exception>
     private static string CreateMethodName(string functionName, ParameterListSyntax parameterList) {
         if (parameterList.Parameters.Count == 0)
             return functionName;

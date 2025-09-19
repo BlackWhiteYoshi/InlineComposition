@@ -11,7 +11,6 @@ public sealed class HeadTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 /// <summary>
                 /// Test comment with Attribute
@@ -49,7 +48,6 @@ public sealed class HeadTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test : MyBase, IA, IB;
 
             [Inline<Test>]
@@ -75,7 +73,6 @@ public sealed class HeadTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test : MyBase(5);
 
             [Inline<Test>]

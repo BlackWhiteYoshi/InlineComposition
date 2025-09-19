@@ -11,7 +11,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public class Test {
                 public int myField = 5;
             }
@@ -41,7 +40,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public struct Test {
                 public int myField = 5;
             }
@@ -71,7 +69,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public class record Test {
                 public int myField = 5;
             }
@@ -101,7 +98,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public struct record Test {
                 public int myField = 5;
             }
@@ -132,7 +128,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public int myField = 5;
             }
@@ -162,7 +157,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public struct Test {
                 public int myField = 5;
             }
@@ -192,7 +186,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed record class Test {
                 public int myField = 5;
             }
@@ -222,7 +215,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed record struct Test {
                 public int myField = 5;
             }
@@ -253,7 +245,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public class Test {
                 public int myField = 5;
             }
@@ -283,7 +274,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public struct Test {
                 public int myField = 5;
             }
@@ -313,7 +303,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public record class Test {
                 public int myField = 5;
             }
@@ -343,7 +332,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public record struct Test {
                 public int myField = 5;
             }
@@ -374,7 +362,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public class Test {
                 public int myField = 5;
             }
@@ -404,7 +391,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public struct Test {
                 public int myField = 5;
             }
@@ -434,7 +420,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public record Test {
                 public int myField = 5;
             }
@@ -464,7 +449,6 @@ public sealed class TypeTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public record struct Test {
                 public int myField = 5;
             }

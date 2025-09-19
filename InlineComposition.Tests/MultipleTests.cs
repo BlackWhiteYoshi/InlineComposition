@@ -11,12 +11,10 @@ public sealed class MultipleTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public int myField = 5;
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 public int myField2 = 25;
             }
@@ -48,10 +46,8 @@ public sealed class MultipleTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test(int prime);
 
-            [InlineBase]
             public sealed class Test2(int prime, string a);
 
             [Inline<Test, Test2>]
@@ -77,10 +73,8 @@ public sealed class MultipleTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test(int prime);
 
-            [InlineBase]
             public sealed class Test2(int prime2, string a);
 
             [Inline<Test, Test2>]
@@ -113,12 +107,10 @@ public sealed class MultipleTests {
             public interface IB;
             public interface IC;
 
-            [InlineBase]
             public sealed class Test : A, IA, IB {
                 public int myField = 5;
             }
 
-            [InlineBase]
             public sealed class Test2 : A, IA, IC {
                 public int myField2 = 25;
             }
@@ -150,12 +142,10 @@ public sealed class MultipleTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public int myField = 5;
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 public int myField = 5;
             }
@@ -184,14 +174,12 @@ public sealed class MultipleTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public void MyMethod() {
                     int ab = 17;
                 }
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 public void MyMethod() {
                     int cd = 283;
@@ -230,13 +218,11 @@ public sealed class MultipleTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_internString")]
                 private extern static ref string GetString(Test @this);
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_internString")]
                 private extern static ref string GetString(Test @this);
@@ -268,14 +254,12 @@ public sealed class MultipleTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public Test() {
                     int ab = 17;
                 }
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 public Test2() {
                     int cd = 283;
@@ -314,14 +298,12 @@ public sealed class MultipleTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 ~Test() {
                     int ab = 17;
                 }
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 ~Test2() {
                     int cd = 283;
@@ -360,12 +342,10 @@ public sealed class MultipleTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public int a = 1;
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 public int b = 2;
             }

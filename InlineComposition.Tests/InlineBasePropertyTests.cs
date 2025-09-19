@@ -51,7 +51,7 @@ public sealed class InlineBasePropertyTests {
             [InlineBase(IgnoreInheritenceAndImplements = true)]
             public sealed class Test : ITest;
 
-            [InlineBase]
+            [InlineBase(IgnoreInheritenceAndImplements = false)]
             public sealed class Test2 : ITest2;
 
             [Inline<Test, Test2>]

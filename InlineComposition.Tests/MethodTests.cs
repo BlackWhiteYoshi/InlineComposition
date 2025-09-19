@@ -11,7 +11,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public void MyMethod() {
                     int ab = 17;
@@ -71,7 +70,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public static void StaticMethod() {
                     int ab = 17;
@@ -107,7 +105,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public static bool operator |(Test a, Test b) {
                     return true;
@@ -143,7 +140,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 [UnsafeAccessor(UnsafeAccessorKind.Field, Name = "_internString")]
                 private extern static ref string GetString(Test @this);
@@ -175,7 +171,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public void MyMethod() {
                     int ab = 17;
@@ -252,7 +247,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public static bool operator |() => true;
             }
@@ -293,7 +287,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public void MyMethod() {
                     int ab = 17;
@@ -338,7 +331,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public void MyMethod1() {
                     int ab = 1;
@@ -483,14 +475,12 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public void MyMethod() {
                     int ab = 17;
                 }
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 public void MyMethod(int q) {
                     int ab = 17;
@@ -533,7 +523,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public Test() {
                     int ab = 17;
@@ -569,7 +558,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public Test() {
                     int ab = 17;
@@ -615,7 +603,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public Test() {
                     int ab = 17;
@@ -661,7 +648,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public Test() {
                     int ab = 17;
@@ -706,7 +692,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             [InlineBase(IgnoreInheritenceAndImplements = true)]
             public sealed class Test {
                 public Test() {
@@ -752,7 +737,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             [InlineBase(IgnoreInheritenceAndImplements = true)]
             public sealed class Test {
                 public Test() {
@@ -798,14 +782,12 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public Test() {
                     int ab = 17;
                 }
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 public Test(int q) {
                     int ab = 17;
@@ -847,7 +829,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 static Test() { }
             }
@@ -875,7 +856,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test(int prime);
 
             [Inline<Test>]
@@ -902,7 +882,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 ~Test() {
                     int ab = 17;
@@ -938,7 +917,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 ~Test() {
                     int ab = 17;
@@ -983,7 +961,6 @@ public sealed class MethodTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 ~Test() {
                     int ab = 17;

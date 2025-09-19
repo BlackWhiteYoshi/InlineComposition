@@ -11,7 +11,6 @@ public sealed class GenericTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test<T> {
                 public T myField = default;
 
@@ -35,21 +34,21 @@ public sealed class GenericTests {
             {{Shared.GENERATED_SOURCE_HEAD}}
 
             public sealed partial class Derived {
-                public string myField = default;
+                public String myField = default;
 
                 public void MyMethod<U>() {
                     {
-                    string variable1 = default;
+                    String variable1 = default;
                     U variable2 = default;
                     }
                 }
 
-                public string GenericParameter(System.Collections.Generic.List<string> list) {
+                public String GenericParameter(System.Collections.Generic.List<String> list) {
                     {
                     }
                 }
 
-                public string Id(string t) {
+                public String Id(String t) {
                     {
                         return default!;
                     }
@@ -87,14 +86,14 @@ public sealed class GenericTests {
         const string expected = $$"""
             {{Shared.GENERATED_SOURCE_HEAD}}
 
-            public partial struct Derived : IEquatable<Derived>, IComparable<string> {
-                public Derived A(Derived t, string t2) {
+            public partial struct Derived : IEquatable<Derived>, IComparable<String> {
+                public Derived A(Derived t, String t2) {
                     {
                         return null!;
                     }
                 }
 
-                public Test<string> B(Test<string> t, string t2) {
+                public Test<String> B(Test<String> t, String t2) {
                     {
                         return null!;
                     }

@@ -20,7 +20,6 @@ public sealed class SpecialTests {
                     [Inline<Test>]
                     public sealed partial class Derived;
 
-                    [InlineBase]
                     public sealed class Base;
                 }
             }
@@ -48,40 +47,12 @@ public sealed class SpecialTests {
     }
 
     [Test]
-    public async ValueTask Inline_WithoutInlineBase_DoesNotWork() {
-        const string input = """
-            using InlineCompositionAttributes;
-
-            namespace MyCode;
-
-            [Inline<Test>]
-            public sealed partial class Derived;
-
-            public sealed class Test {
-                public int myField = 5;
-            }
-
-            """;
-        string sourceText = Shared.GenerateSourceText(input, out _, out _)[^1];
-
-        const string expected = $$"""
-            {{Shared.GENERATED_SOURCE_HEAD}}
-
-            public sealed partial class Derived {
-            }
-
-            """;
-        await Assert.That(sourceText).IsEqualTo(expected);
-    }
-
-    [Test]
     public async ValueTask NoInline() {
         const string input = """
             using InlineCompositionAttributes;
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public int myField = 5;
 
@@ -117,7 +88,6 @@ public sealed class SpecialTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class TestGeneric<T> {
                 public int myField = 5;
 
@@ -143,7 +113,6 @@ public sealed class SpecialTests {
                 private void PrivateMethod() { }
             }
 
-            [InlineBase]
             public sealed class Test2 {
                 public int myField = 5;
 
@@ -196,7 +165,7 @@ public sealed class SpecialTests {
                 public bool A { get; private set; }
 
 
-                public event Action<nint> A;
+                public event Action<IntPtr> A;
 
                 [InlineMethod(MethodName = "MethodTest", Modifiers = "public")]
                 public void MethodTest(string key, int value) {
@@ -248,7 +217,7 @@ public sealed class SpecialTests {
                 public bool A { get; private set; }
 
 
-                public event Action<string> A;
+                public event Action<String> A;
 
                 public Derived() {
                     {

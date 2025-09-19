@@ -15,7 +15,6 @@ public sealed class InlineMemberTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public struct NestedStruct;
 
@@ -62,7 +61,6 @@ public sealed class InlineMemberTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public int myField = 5;
 
@@ -97,7 +95,6 @@ public sealed class InlineMemberTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public bool A { get; private set; }
             }
@@ -127,7 +124,6 @@ public sealed class InlineMemberTests {
 
             namespace MyCode;
 
-            [InlineBase]
             public sealed class Test {
                 public event Action<byte> A;
             }
