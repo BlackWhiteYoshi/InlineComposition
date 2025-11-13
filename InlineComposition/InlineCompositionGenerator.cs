@@ -409,7 +409,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             BaseNamespaceDeclarationSyntax? namespaceSyntax = inlineClass.GetParent<BaseNamespaceDeclarationSyntax>();
             if (namespaceSyntax != null) {
                 int startIndex = builder.Length + 10; // 10 = "namespace ".Length
-                builder.AppendInterpolation($"namespace {namespaceSyntax.AsNamespace()};\n\n");
+                builder.AppendInterpolation($"namespace {namespaceSyntax.AsNamespace};\n\n");
                 classNamespace = builder.ToString(startIndex, builder.Length - 3 - startIndex); // 3 = ";\n\n".Length
             }
             else

@@ -1,4 +1,4 @@
-using Microsoft.CodeAnalysis.CSharp.Syntax;
+﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Runtime.CompilerServices;
 using System.Text;
 
@@ -21,12 +21,15 @@ public static class StringBuilderExtesions {
 
         return builder;
     }
-    /// <summary>
-    /// Creates a type to map method <see cref="StringBuilderInterpolationHandler.AppendFormatted(StringBuilderInterpolationHandler.INamespace)"/> to <see cref="AppendNamespace"/>.
-    /// </summary>
-    /// <param name="service"></param>
-    /// <returns></returns>
-    public static StringBuilderInterpolationHandler.INamespace AsNamespace(this BaseNamespaceDeclarationSyntax namespaceSyntax) => Unsafe.As<StringBuilderInterpolationHandler.INamespace>(namespaceSyntax);
+    extension(BaseNamespaceDeclarationSyntax namespaceSyntax) {
+        /// <summary>
+        /// Creates a type to map method <see cref="StringBuilderInterpolationHandler.AppendFormatted(StringBuilderInterpolationHandler.INamespace)"/> to <see cref="AppendNamespace"/>.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <returns></returns>
+        public StringBuilderInterpolationHandler.INamespace AsNamespace => Unsafe.As<StringBuilderInterpolationHandler.INamespace>(namespaceSyntax);
+    }
+
 
     /// <summary>
     /// The same as <see cref="StringBuilder.Append(string)"/>, but only for interpolated strings: $"..."<br />
