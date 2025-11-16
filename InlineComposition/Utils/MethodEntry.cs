@@ -1,4 +1,4 @@
-﻿namespace InlineComposition;
+namespace InlineComposition;
 
 /// <summary>
 /// Represents the content of an inlined method (with head declarations and without closing bracket).

@@ -1,4 +1,4 @@
-﻿# InlineComposition
+# InlineComposition
 
 A source generator that merges the content of other classes into one class.
 A simple workaround for struct inheritance or multiple inheritance.

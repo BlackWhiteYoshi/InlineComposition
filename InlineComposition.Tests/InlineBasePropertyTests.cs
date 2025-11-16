@@ -1,4 +1,4 @@
-﻿namespace InlineComposition.Tests;
+namespace InlineComposition.Tests;
 
 /// <summary>
 /// InlineBase Properties

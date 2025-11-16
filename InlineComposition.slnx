@@ -1,4 +1,4 @@
-﻿<Solution>
+<Solution>
   <Project Path="InlineComposition/InlineComposition.csproj" />
   <Project Path="InlineComposition.Tests/InlineComposition.Tests.csproj" />
 </Solution>

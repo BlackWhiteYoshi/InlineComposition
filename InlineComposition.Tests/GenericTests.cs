@@ -1,4 +1,4 @@
-﻿namespace InlineComposition.Tests;
+namespace InlineComposition.Tests;
 
 /// <summary>
 /// If the inlined class/struct/record itself or base has type parameters
