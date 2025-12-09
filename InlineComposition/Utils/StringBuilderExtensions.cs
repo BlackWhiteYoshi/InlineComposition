@@ -4,7 +4,7 @@ using System.Text;
 
 namespace InlineComposition;
 
-public static class StringBuilderExtesions {
+public static class StringBuilderExtensions {
     /// <summary>
     /// Appends in a recursive way the full namespace.
     /// </summary>
