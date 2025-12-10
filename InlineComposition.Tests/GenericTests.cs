@@ -22,6 +22,8 @@ public sealed class GenericTests {
                 public T GenericParameter(System.Collections.Generic.List<T> list) { }
 
                 public T Id(T t) => default!;
+
+                public void ConstraintMethod<U>() where U : IEnumerable<U>, new() { }
             }
 
             [Inline<Test<string>>]
@@ -51,6 +53,11 @@ public sealed class GenericTests {
                 public String Id(String t) {
                     {
                         return default!;
+                    }
+                }
+
+                public void ConstraintMethod<U>() where U : IEnumerable<U>, new() {
+                    {
                     }
                 }
 

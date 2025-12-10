@@ -581,6 +581,11 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
             list.Add(ReplaceGeneric(typeParameterList.ToString(), genericParameters, genericArguments));
         list.Add(ReplaceGeneric(method.ParameterList.ToString(), genericParameters, genericArguments));
         list.Add(" ");
+
+        if (method is MethodDeclarationSyntax { ConstraintClauses.Count: > 0 } methodDeclaration) {
+            list.Add(ReplaceGeneric(methodDeclaration.ConstraintClauses.ToString(), genericParameters, genericArguments));
+            list.Add(" ");
+        }
     }
 
     private static void AddConDestructorHead(BaseMethodDeclarationSyntax method, List<string> list, string name, string? modifiers, string[] genericParameters, string[] genericArguments) {
