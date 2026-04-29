@@ -16,7 +16,8 @@ public static partial class Attributes {
         namespace InlineCompositionAttributes;
 
         /// <summary>
-        /// <para>Marks this class/struct as inlineable, so it can be listed in a <see cref="InlineAttribute{T1}"/> Attribute.</para>
+        /// Classes/Structs that get inlined can be decorated with additional modifiers.<br />
+        /// Itself it does nothing, but you can also use it to make the usage of your base class/struct clear.
         /// </summary>
         [AttributeUsage(AttributeTargets.Class | AttributeTargets.Struct)]
         [System.CodeDom.Compiler.GeneratedCodeAttribute("{{Assembly.NAME}}", "{{Assembly.VERSION_MAJOR_MINOR_BUILD}}")]
