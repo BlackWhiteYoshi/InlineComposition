@@ -487,11 +487,15 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
 
         string sourceCode = builder.ToString();
 
-
-        string hintName = classNamespace switch {
-            string { Length: > 0 } => $"{classNamespace}.{inlineClassName}.g.cs",
-            _ => $"{inlineClassName}.g.cs"
-        };
+        builder.Clear();
+        if (classNamespace.Length > 0)
+            builder.AppendInterpolation($"{classNamespace}.");
+        builder.Append(inlineClassName);
+        if (inlineClass.TypeParameterList is not null)
+            foreach (var typeParameter in inlineClass.TypeParameterList.Parameters)
+                builder.AppendInterpolation($",{typeParameter}");
+        builder.Append(".g.cs");
+        string hintName = builder.ToString();
 
         context.AddSource(hintName, sourceCode);
 

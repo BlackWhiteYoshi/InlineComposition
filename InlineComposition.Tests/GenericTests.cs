@@ -111,4 +111,62 @@ public sealed class GenericTests {
             """;
         await Assert.That(sourceText).IsEqualTo(expected);
     }
+
+    [Test]
+    public async ValueTask GenericMultipleSameName() {
+        const string input = """
+            using InlineCompositionAttributes;
+
+            namespace MyCode;
+
+            public class BaseA;
+
+            [Inline<BaseA>]
+            public partial class Derived;
+
+            [Inline<BaseA>]
+            public partial class Derived<T>;
+
+            [Inline<BaseA>]
+            public partial class Derived<T1, T2>;
+
+            """;
+        string[] sourceTexts = Shared.GenerateSourceText(input, out _, out _);
+
+        {
+            string sourceTextGeneric0 = sourceTexts[^3];
+            const string expected = $$"""
+                {{Shared.GENERATED_SOURCE_HEAD}}
+
+                public partial class Derived {
+                }
+
+                """;
+            await Assert.That(sourceTextGeneric0).IsEqualTo(expected);
+        }
+
+        {
+            string sourceTextGeneric1 = sourceTexts[^2];
+            const string expected = $$"""
+                {{Shared.GENERATED_SOURCE_HEAD}}
+
+                public partial class Derived<T> {
+                }
+
+                """;
+            await Assert.That(sourceTextGeneric1).IsEqualTo(expected);
+        }
+
+        {
+            string sourceTextGeneric2 = sourceTexts[^1];
+            const string expected = $$"""
+                {{Shared.GENERATED_SOURCE_HEAD}}
+
+                public partial class Derived<T1, T2> {
+                }
+
+                """;
+            await Assert.That(sourceTextGeneric2).IsEqualTo(expected);
+        }
+    }
 }
