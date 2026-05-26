@@ -45,7 +45,7 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                     Debug.Assert(syntaxContext.Attributes[0].AttributeClass is not null);
 
                     TypeDeclarationSyntax inlineClassSyntax = (TypeDeclarationSyntax)syntaxContext.TargetNode;
-                    INamedTypeSymbol inlineClassSymbol = (INamedTypeSymbol)syntaxContext.TargetSymbol;
+                    //INamedTypeSymbol inlineClassSymbol = (INamedTypeSymbol)syntaxContext.TargetSymbol;
                     AttributeData inlineAttribute = syntaxContext.Attributes[0];
 
                     TypeDeclarationSyntax?[] baseClassArray = new TypeDeclarationSyntax[inlineAttribute.AttributeClass!.TypeArguments.Length];
@@ -416,6 +416,22 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
                 classNamespace = string.Empty;
         }
 
+        // nested classes
+        List<TypeDeclarationSyntax> containingTypeList = [];
+        {
+            SyntaxNode? parentNode = inlineClass.Parent;
+            while (parentNode is TypeDeclarationSyntax typeNode) {
+                containingTypeList.Add(typeNode);
+                parentNode = typeNode.Parent;
+            }
+
+            for (int i = containingTypeList.Count - 1; i >= 0; i--)
+                if (containingTypeList[i] is RecordDeclarationSyntax recordType)
+                    builder.AppendInterpolation($"partial record {recordType.ClassOrStructKeyword.ValueText} {containingTypeList[i].Identifier.ValueText} {{\n");
+                else
+                    builder.AppendInterpolation($"partial {containingTypeList[i].Keyword.ValueText} {containingTypeList[i].Identifier.ValueText} {{\n");
+        }
+
         // attributes
         foreach (string attribute in attributeList)
             builder.AppendInterpolation($"{attribute}\n");
@@ -485,11 +501,17 @@ public sealed class InlineCompositionGenerator : IIncrementalGenerator {
         // close class/struct
         builder.Append("}\n");
 
+        // close nested classes
+        for (int i = 0; i < containingTypeList.Count; i++)
+            builder.Append("}\n");
+
         string sourceCode = builder.ToString();
 
         builder.Clear();
         if (classNamespace.Length > 0)
             builder.AppendInterpolation($"{classNamespace}.");
+        for (int i = containingTypeList.Count - 1; i >= 0; i--)
+            builder.AppendInterpolation($"{containingTypeList[i].Identifier.ValueText}.");
         builder.Append(inlineClassName);
         if (inlineClass.TypeParameterList is not null)
             foreach (var typeParameter in inlineClass.TypeParameterList.Parameters)
